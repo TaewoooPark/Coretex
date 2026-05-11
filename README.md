@@ -48,7 +48,7 @@ The current demo makes that question concrete through a graph workspace, node in
 
 Most collaboration tools preserve artifacts, not reasoning. A file tree can show what exists. A chat transcript can show that people talked. A board can show that work moved. They do not reliably answer why a final output exists, which rejected path shaped it, or where a new teammate should begin reading.
 
-CORETEX starts from the premise in [plan.md](./plan.md) that project work is not linear. It is a lineage of assumptions, evidence, edits, arguments, decisions, and abandoned alternatives. A final document is usually only the visible end of a hidden causal chain. The product therefore treats context as a first-class object rather than metadata around a file.
+CORETEX treats project work as a lineage of assumptions, evidence, edits, arguments, decisions, and abandoned alternatives rather than a linear sequence of files. A final document is usually only the visible end of a hidden causal chain, so the product treats context as a first-class object rather than metadata around a file.
 
 This matters most in work where the discarded branch is still knowledge: startup pivots, research hypotheses, design feedback, strategy documents, product decisions, and handoffs between teams. In those settings, losing the reason behind a decision is often more expensive than losing the decision itself.
 
@@ -64,7 +64,7 @@ This matters most in work where the discarded branch is still knowledge: startup
 | AI should not decide for the team. | AI only extracts tags, related nodes, candidate edges, summaries, and explicit decision statements. |
 | Visual shape changes thought. | The interface uses a dense brutalist monochrome system so structure, contrast, and lineage stay visible. |
 
-The implementation rule from [plan.md](./plan.md) is intentionally blunt: if a feature helps the project track context, genealogy, decision reasons, or version flow, it belongs near the core. If it only makes CORETEX look like another file manager, whiteboard, or chat wrapper, it is secondary.
+The prototype keeps a blunt scope rule: if a feature helps track context, genealogy, decision reasons, or version flow, it belongs near the core. If it only makes CORETEX look like another file manager, whiteboard, or chat wrapper, it is secondary.
 
 ## Demo Route
 
@@ -177,35 +177,9 @@ data/local-library/project_demo/research/context-loss-notes.txt
 
 When a supported text asset is imported from the `Local Files` panel, CORETEX creates an `ASSET` node, stores source metadata, and includes the source file in the archive. If another graph node is selected during import, the app creates a `REFERENCES` edge from that node to the imported asset.
 
-## Verify
+## Prototype Scope
 
-```bash
-npm run test
-npx tsc --noEmit
-npm run build
-npx prisma validate
-npm run prisma:generate
-npm run seed
-npm audit --json
-```
-
-`npm run build` uses `next build --webpack` because Next 16 Turbopack build attempts an internal port bind that is blocked in this sandbox.
-
-## Current Boundaries
-
-Implemented as prototype behavior:
-
-| Implemented | Not production infrastructure yet |
-| --- | --- |
-| Graph workspace | Real NextAuth provider setup |
-| Node and edge CRUD | Runtime PostgreSQL persistence |
-| Document versions | Real-time collaborative editing |
-| Scoped chat | Slack, Figma, Google Drive, or S3 sync |
-| Message-node linking | pgvector search |
-| Message-to-node creation | Stripe billing |
-| Fallback semantic extraction | Organization SSO |
-| Local file import | Production deployment hardening |
-| Search, time travel, archive generation | Production observability and audit policy |
+CORETEX is a single-user visual prototype. Data lives in an in-memory demo store seeded from `data/local-library/project_demo`, so reloads reset to a known state and no external services are required. Authentication, real-time collaboration, external integrations (Slack, Figma, Drive, S3), vector search, and billing are intentionally out of scope. The product schema in `prisma/` is reference shape, not a live runtime.
 
 ## License
 

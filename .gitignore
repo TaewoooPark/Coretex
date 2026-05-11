@@ -13,3 +13,6 @@ pnpm-debug.log*
 
 tsconfig.tsbuildinfo
 .DS_Store
+
+plan.md
+IMPLEMENTATION_REVIEW.md
