@@ -48,7 +48,7 @@ CORETEX는 production SaaS가 아니라 실행 가능한 비주얼 프로토타�
 
 대부분의 협업 도구는 산출물은 보존하지만 사고 과정은 보존하지 못합니다. 파일 트리는 무엇이 존재하는지 보여주고, 채팅 로그는 사람들이 대화했다는 사실을 보여주고, 보드는 일이 이동했다는 사실을 보여줍니다. 하지만 최종안이 왜 존재하는지, 어떤 폐기안이 지금 방향을 만들었는지, 새 팀원이 어디서부터 읽어야 하는지는 안정적으로 답하지 못합니다.
 
-CORETEX는 [plan.md](../../plan.md)의 전제처럼 프로젝트 업무가 선형적이지 않다는 관찰에서 출발합니다. 실제 업무는 가정, 근거, 수정, 논쟁, 결정, 폐기된 대안이 이어진 계보입니다. 최종 문서는 보통 그 인과 사슬의 마지막에 보이는 표면일 뿐입니다. 따라서 CORETEX는 맥락을 파일 주변의 부가 정보가 아니라 독립적인 1급 객체로 다룹니다.
+CORETEX는 프로젝트 업무를 선형적인 파일의 나열이 아니라 가정, 근거, 수정, 논쟁, 결정, 폐기된 대안이 이어진 계보로 다룹니다. 최종 문서는 보통 그 인과 사슬의 마지막에 보이는 표면일 뿐이므로, 맥락을 파일 주변의 부가 정보가 아니라 독립적인 1급 객체로 둡니다.
 
 이 문제는 폐기된 갈래도 지식인 곳에서 특히 큽니다. 스타트업의 방향 전환, 연구팀의 가설과 실패한 실험, 디자인 피드백, 전략 문서, 제품 의사결정, 팀 간 인수인계에서는 결정 자체보다 결정 이유를 잃는 비용이 더 커질 수 있습니다.
 
@@ -64,7 +64,7 @@ CORETEX는 [plan.md](../../plan.md)의 전제처럼 프로젝트 업무가 선�
 | AI는 팀 대신 결정하지 않아야 합니다. | AI는 태그, 관련 노드, 후보 edge, 요약, 명시적 결정 문장만 추출합니다. |
 | 시각적 형태는 사고 방식을 바꿉니다. | 조밀한 브루탈리즘 모노톤 UI로 구조, 대비, 계보가 계속 보이게 합니다. |
 
-[plan.md](../../plan.md)의 구현 판단 기준은 단순합니다. 어떤 기능이 프로젝트의 맥락, 계보, 결정 이유, 버전 흐름을 더 잘 추적하게 만든다면 핵심에 가깝습니다. 단지 CORETEX를 또 다른 파일 관리자, 화이트보드, 채팅 껍데기처럼 보이게 하는 기능이라면 부차적입니다.
+프로토타입의 범위 기준은 단순합니다. 어떤 기능이 프로젝트의 맥락, 계보, 결정 이유, 버전 흐름을 더 잘 추적하게 만든다면 핵심에 가깝습니다. 단지 CORETEX를 또 다른 파일 관리자, 화이트보드, 채팅 껍데기처럼 보이게 하는 기능이라면 부차적입니다.
 
 ## 데모 주소
 
@@ -177,35 +177,9 @@ data/local-library/project_demo/research/context-loss-notes.txt
 
 `Local Files` 패널에서 지원되는 텍스트 자료를 import하면 CORETEX는 `ASSET` 노드를 만들고 source metadata를 저장하며 archive에도 파일을 포함합니다. 다른 그래프 노드가 선택된 상태에서 import하면 선택 노드에서 asset 노드로 `REFERENCES` edge가 생성됩니다.
 
-## 검증
+## 프로토타입 범위
 
-```bash
-npm run test
-npx tsc --noEmit
-npm run build
-npx prisma validate
-npm run prisma:generate
-npm run seed
-npm audit --json
-```
-
-`npm run build`는 `next build --webpack`을 사용합니다. 현재 sandbox에서 Next 16 Turbopack build가 내부 port bind를 시도해 막히기 때문입니다.
-
-## 현재 경계
-
-프로토타입으로 구현된 것과 아직 production infrastructure가 아닌 것을 분리하면 다음과 같습니다.
-
-| 구현됨 | 아직 production infrastructure 아님 |
-| --- | --- |
-| Graph workspace | 실제 NextAuth provider 설정 |
-| Node/edge CRUD | runtime PostgreSQL persistence |
-| Document versions | 실시간 공동 편집 |
-| Scoped chat | Slack, Figma, Google Drive, S3 sync |
-| Message-node linking | pgvector search |
-| Message-to-node creation | Stripe billing |
-| Fallback semantic extraction | 조직 SSO |
-| Local file import | production deployment hardening |
-| Search, time travel, archive generation | production observability and audit policy |
+CORETEX는 단일 사용자용 비주얼 프로토타입입니다. 데이터는 `data/local-library/project_demo`에서 seed된 in-memory 데모 store에 저장되므로 새로고침하면 알려진 초기 상태로 돌아가며, 외부 서비스 연결이 필요 없습니다. 인증, 실시간 공동 편집, 외부 통합(Slack, Figma, Drive, S3), 벡터 검색, 결제는 의도적으로 범위 밖입니다. `prisma/`의 제품 스키마는 참고용 형태이고 실시간 런타임이 아닙니다.
 
 ## 라이선스
 
