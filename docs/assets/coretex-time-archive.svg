@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="760" viewBox="0 0 1440 760" role="img" aria-labelledby="title desc">
+  <title id="title">CORETEX time travel and archive</title>
+  <desc id="desc">A diagram showing historical graph replay and structured archive report generation.</desc>
+  <rect width="1440" height="760" fill="#f4f4f0"/>
+  <rect x="70" y="72" width="632" height="616" fill="#fff" stroke="#000" stroke-width="5"/>
+  <rect x="70" y="72" width="632" height="56" fill="#000"/>
+  <text x="100" y="108" fill="#fff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" font-weight="700">TIME TRAVEL</text>
+  <rect x="104" y="162" width="564" height="376" fill="#f4f4f0" stroke="#000" stroke-width="4"/>
+  <defs>
+    <pattern id="grid5" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0V24" fill="none" stroke="#000" stroke-width="1" opacity=".1"/>
+    </pattern>
+    <marker id="arrow5" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L10,3 L0,6 Z" fill="#000"/>
+    </marker>
+  </defs>
+  <rect x="104" y="162" width="564" height="376" fill="url(#grid5)"/>
+  <g stroke="#000" stroke-width="4" fill="none" marker-end="url(#arrow5)" opacity=".65">
+    <path d="M242 278 C306 238 350 238 412 278"/>
+    <path d="M446 304 C500 330 534 368 566 408"/>
+  </g>
+  <g stroke="#000" stroke-width="3" fill="#fff" opacity=".72">
+    <rect x="170" y="242" width="128" height="72"/>
+    <rect x="390" y="242" width="128" height="72"/>
+    <rect x="530" y="398" width="102" height="72"/>
+  </g>
+  <text x="130" y="574" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="700">READ ONLY PAST STATE</text>
+  <rect x="104" y="606" width="564" height="26" fill="#000"/>
+  <circle cx="420" cy="619" r="15" fill="#fff" stroke="#000" stroke-width="4"/>
+  <rect x="738" y="72" width="632" height="616" fill="#fff" stroke="#000" stroke-width="5"/>
+  <rect x="738" y="72" width="632" height="56" fill="#000"/>
+  <text x="768" y="108" fill="#fff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" font-weight="700">ARCHIVE REPORT</text>
+  <g stroke="#000" stroke-width="4" fill="#fff">
+    <rect x="778" y="164" width="552" height="86"/>
+    <rect x="778" y="282" width="252" height="136"/>
+    <rect x="1078" y="282" width="252" height="136"/>
+    <rect x="778" y="454" width="252" height="136"/>
+    <rect x="1078" y="454" width="252" height="136"/>
+  </g>
+  <g fill="#000">
+    <rect x="808" y="194" width="238" height="8"/>
+    <rect x="808" y="222" width="412" height="6"/>
+    <rect x="808" y="322" width="156" height="7"/>
+    <rect x="808" y="352" width="198" height="7"/>
+    <rect x="1108" y="322" width="152" height="7"/>
+    <rect x="1108" y="352" width="174" height="7"/>
+    <rect x="808" y="494" width="176" height="7"/>
+    <rect x="808" y="524" width="120" height="7"/>
+    <rect x="1108" y="494" width="170" height="7"/>
+    <rect x="1108" y="524" width="194" height="7"/>
+  </g>
+</svg>

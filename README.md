@@ -1,92 +1,154 @@
-# CORETEX
+<h1 align="center">CORETEX</h1>
 
-**CORETEX is a visual prototype for a node-based collaborative document system.**
+<p align="center">
+  <strong>Visual prototype for traceable collaborative documents.</strong><br />
+  Documents, chats, versions, decisions, and local files rendered as a decision genealogy graph.
+</p>
 
-It explores a product direction where project work is not organized as linear folders, isolated documents, or detached chat history. Instead, documents, messages, versions, decisions, tags, and local file assets are represented as **Traceable Work Nodes** inside a directed decision graph.
+<p align="center">
+  <img alt="License: Proprietary" src="https://img.shields.io/badge/license-proprietary-333333?style=flat-square&labelColor=000000" />
+  <img alt="Top language" src="https://img.shields.io/github/languages/top/TaewoooPark/Coretex?style=flat-square&labelColor=000000&color=333333" />
+  <img alt="Repository stars" src="https://img.shields.io/github/stars/TaewoooPark/Coretex?style=flat-square&labelColor=000000&color=333333" />
+  <img alt="Last commit" src="https://img.shields.io/github/last-commit/TaewoooPark/Coretex?style=flat-square&labelColor=000000&color=333333" />
+</p>
 
-[한국어 README](docs/ko/README.md)
+<p align="center">
+  <a href="./docs/ko/README.md">한국어 README</a> ·
+  <a href="https://github.com/TaewoooPark/NODEPROMPT">NODEPROMPT</a> ·
+  <a href="https://github.com/TaewoooPark/PAIDEIA">PAIDEIA</a> ·
+  <a href="https://taewoopark.com">taewoopark.com</a>
+</p>
 
-![CORETEX visual prototype](docs/assets/coretex-hero.png)
+<p align="center">
+  <img src="./docs/assets/coretex-hero.svg" alt="CORETEX visual prototype overview" width="100%" />
+</p>
 
-## What This Is
+## Visual Prototype
 
-CORETEX is currently a runnable interaction prototype, not a production SaaS.
+CORETEX is a runnable visual prototype, not a production SaaS. It explores a product direction where project work is not buried in folders, detached chat logs, and isolated document versions. Instead, every meaningful unit of work becomes a **Traceable Work Node** inside a directed graph.
 
-The prototype is meant to validate the core product idea:
+The prototype is built to test one product question:
 
 > Can a team trace where a final output came from, which drafts and conversations shaped it, and what evidence still supports the decision?
 
-The current app demonstrates that flow through a monochrome brutalist workspace: graph canvas, node inspector, document editor, chat layer, time-travel bar, archive report, and local file import.
+The current demo makes that question concrete through a graph workspace, node inspector, document editor, scoped chat, version history, local file import, search, time travel, and archive generation.
 
-## Tags
+## Topic Boxes
 
-`typescript` · `react` · `nextjs` · `knowledge-graph` · `information-visualization` · `local-first` · `markdown` · `llm` · `document-management` · `collaboration` · `react-flow` · `zustand`
+<p align="center">
+  <img alt="#typescript" src="https://img.shields.io/badge/%23typescript-333333?style=flat-square&labelColor=000000" />
+  <img alt="#react" src="https://img.shields.io/badge/%23react-333333?style=flat-square&labelColor=000000" />
+  <img alt="#nextjs" src="https://img.shields.io/badge/%23nextjs-333333?style=flat-square&labelColor=000000" />
+  <img alt="#knowledge-graph" src="https://img.shields.io/badge/%23knowledge--graph-333333?style=flat-square&labelColor=000000" />
+  <img alt="#information-visualization" src="https://img.shields.io/badge/%23information--visualization-333333?style=flat-square&labelColor=000000" />
+  <img alt="#local-first" src="https://img.shields.io/badge/%23local--first-333333?style=flat-square&labelColor=000000" />
+  <img alt="#markdown" src="https://img.shields.io/badge/%23markdown-333333?style=flat-square&labelColor=000000" />
+  <img alt="#llm" src="https://img.shields.io/badge/%23llm-333333?style=flat-square&labelColor=000000" />
+  <img alt="#document-management" src="https://img.shields.io/badge/%23document--management-333333?style=flat-square&labelColor=000000" />
+  <img alt="#collaboration" src="https://img.shields.io/badge/%23collaboration-333333?style=flat-square&labelColor=000000" />
+  <img alt="#react-flow" src="https://img.shields.io/badge/%23react--flow-333333?style=flat-square&labelColor=000000" />
+  <img alt="#zustand" src="https://img.shields.io/badge/%23zustand-333333?style=flat-square&labelColor=000000" />
+</p>
 
-These tags follow the direction used across my public repositories: graph interfaces, local-first workflows, knowledge tools, markdown-based systems, and AI-assisted context extraction.
+The topic set follows the public taxonomy used across my graph and knowledge-tool repositories, especially NODEPROMPT and PAIDEIA: graph interfaces, local-first workflows, markdown systems, and AI-assisted context extraction.
 
-## Demo Checklist
+## Demo Route
 
-After starting the dev server, open:
+Start the dev server and open the flow workspace:
+
+```bash
+npm install
+npm run dev -- --port 3000
+```
 
 ```text
 http://localhost:3000/app/w/workspace_demo/p/project_demo/flow
 ```
 
-In the demo, you can verify:
-
-- **Graph workspace**: context nodes rendered as a directed genealogy graph.
-- **Node selection**: click a node to inspect metadata, document content, chat, versions, genealogy, and AI suggestions.
-- **Node creation**: create an `IDEA`, `BRIEF`, `RESEARCH`, `DRAFT`, `DECISION`, `ASSET`, or `FINAL` node.
-- **Edge creation**: connect nodes with semantic relationships such as `SUPPORTS`, `REFINES`, `REFERENCES`, or `DECIDES`.
-- **Cycle rejection**: the API blocks graph edges that would break the DAG.
-- **Document editing**: edit a node document in the TipTap editor and save immutable versions.
-- **Version restore**: open old versions and restore them as new versions.
-- **Project chat**: create project-level messages.
-- **Node chat**: create messages scoped to the selected node.
-- **Message-to-node**: turn a chat message into a new traceable node.
-- **Manual linking**: manually link a message to the active node.
-- **Fallback AI extraction**: use `#tags`, `@node-title` mentions, and decision phrases to trigger semantic suggestions without an API key.
-- **Document extraction**: saved document text can produce tags and relationship suggestions.
-- **Local file import**: import text/Markdown files from `data/local-library/project_demo` as `ASSET` nodes.
-- **Document search**: search across node titles, summaries, document body text, messages, tags, and decisions.
-- **Time travel**: move the bottom timeline to inspect a past graph state in read-only mode.
-- **Archive report**: generate a read-only project archive with genealogy, decisions, final outputs, messages, tags, and source files.
-
-Archive view:
+Archive route:
 
 ```text
 http://localhost:3000/app/w/workspace_demo/p/project_demo/archive
 ```
 
-## Visual Prototype Tour
+## What The Demo Shows
 
-### 1. Graph Workspace
+| Surface | What you can verify |
+| --- | --- |
+| Graph workspace | Directed genealogy graph with `IDEA`, `BRIEF`, `RESEARCH`, `DRAFT`, `DECISION`, `ASSET`, and `FINAL` nodes. |
+| Node inspector | Metadata, document content, chat, versions, genealogy, and AI suggestions stay attached to the selected node. |
+| Edge model | Semantic relationships such as `SUPPORTS`, `REFINES`, `REFERENCES`, and `DECIDES`; cycle-creating edges are rejected. |
+| Document editing | TipTap document editing with immutable saved versions and restore-as-new-version behavior. |
+| Scoped chat | Project-level and node-level messages, manual message-node linking, and message-to-node promotion. |
+| Fallback extraction | `#tags`, `@node-title` mentions, and decision phrases produce semantic suggestions without an API key. |
+| Local files | Text and Markdown assets from `data/local-library/project_demo` can be imported as `ASSET` nodes. |
+| Search | Node titles, summaries, document body text, messages, tags, and decisions are searchable. |
+| Time travel | Bottom timeline reconstructs a past graph state in read-only mode. |
+| Archive | Read-only project report with genealogy, decisions, final outputs, discarded alternatives, messages, tags, and source files. |
 
-The main screen is built around the decision genealogy graph: nodes represent traceable units of work, edges represent semantic relationships, and the inspector keeps document, chat, version, genealogy, and AI context in one place.
+## Visual Tour
 
-![CORETEX graph workspace](docs/assets/coretex-graph-workspace.png)
+### Graph Workspace
 
-### 2. Message To Node
+The main canvas treats work as a directed decision graph. Nodes are traceable units of work, and edges preserve why one unit exists because of another.
 
-Chat is not treated as a disposable side channel. In the demo, a project or node-scoped message can be linked to an existing node or promoted into a new Traceable Work Node.
+<p align="center">
+  <img src="./docs/assets/coretex-graph-workspace.svg" alt="CORETEX graph workspace" width="100%" />
+</p>
 
-![CORETEX message to node workflow](docs/assets/coretex-message-to-node.png)
+### Message To Node
 
-### 3. Local Files To Asset Nodes
+Chat is not disposable context. A project or node-scoped message can be linked to an existing node or promoted into a new Traceable Work Node.
 
-The local file library is the prototype bridge for file/folder context. Supported text assets can be imported as `ASSET` nodes and connected back into the graph.
+<p align="center">
+  <img src="./docs/assets/coretex-message-to-node.svg" alt="CORETEX message to node workflow" width="100%" />
+</p>
 
-![CORETEX local file import workflow](docs/assets/coretex-file-import.png)
+### Local Files To Asset Nodes
 
-### 4. Time Travel And Archive
+The local file library is the prototype bridge for folder context. Supported text assets become `ASSET` nodes and keep source metadata.
 
-The time-travel bar reconstructs a past graph state in read-only mode. The archive view turns the current project graph into a structured report with decisions, final outputs, discarded alternatives, messages, tags, and source files.
+<p align="center">
+  <img src="./docs/assets/coretex-file-import.svg" alt="CORETEX local file import workflow" width="100%" />
+</p>
 
-![CORETEX time travel and archive workflow](docs/assets/coretex-time-archive.png)
+### Time Travel And Archive
+
+The timeline reconstructs historical graph states. The archive route turns the current graph into a structured project memory.
+
+<p align="center">
+  <img src="./docs/assets/coretex-time-archive.svg" alt="CORETEX time travel and archive workflow" width="100%" />
+</p>
+
+## Product Model
+
+The core object is the **Traceable Work Node**. A node should answer:
+
+| Question | Prototype support |
+| --- | --- |
+| Who created this unit of work? | Node metadata and message authorship. |
+| What does it contain? | Title, summary, type, tags, document body, and linked files. |
+| Where did it come from? | Incoming semantic edges and source chat/file references. |
+| What did it cause? | Outgoing semantic edges and downstream final outputs. |
+| Which evidence supports it? | Scoped messages, imported assets, and document versions. |
+| How did it change? | Immutable document versions and restore flow. |
+| Did it affect a decision? | `DECISION` nodes, `DECIDES` edges, and archive sections. |
+
+This is why CORETEX is framed as a context graph rather than a file manager, whiteboard, or chat wrapper.
+
+## Stack
+
+| Layer | Tools |
+| --- | --- |
+| App | Next.js App Router, React, TypeScript |
+| Interface | Tailwind CSS, React Flow, TipTap |
+| State and data | Zustand, TanStack Query, Zod |
+| Product schema | Prisma models and SQL migrations for PostgreSQL |
+| Prototype runtime | In-memory local demo store in `lib/mock-db.ts` |
 
 ## Local File Library
 
-The prototype includes a local file/folder bridge:
+The prototype reads from:
 
 ```text
 data/local-library/<projectId>/
@@ -99,56 +161,7 @@ data/local-library/project_demo/briefs/launch-brief.md
 data/local-library/project_demo/research/context-loss-notes.txt
 ```
 
-Supported text assets can be imported from the `Local Files` panel. Imported files become `ASSET` nodes, keep source metadata, and are included in archive output. If a graph node is selected during import, CORETEX creates a `REFERENCES` edge from that node to the imported asset.
-
-## Product Model
-
-The prototype centers on one object:
-
-**Traceable Work Node**
-
-A node should answer:
-
-- who created this unit of work
-- when it was created
-- what it contains
-- where it came from
-- what it caused
-- which messages and files support it
-- what version history it carries
-- whether it became part of a decision path
-
-This is why CORETEX is framed as a context graph, not a file manager or whiteboard.
-
-## Stack
-
-- Next.js App Router
-- React
-- TypeScript
-- Tailwind CSS
-- React Flow
-- Zustand
-- TanStack Query
-- TipTap
-- Zod
-- Prisma schema and migrations for PostgreSQL
-- In-memory local demo store for runnable prototype mode
-
-## Run Locally
-
-```bash
-npm install
-npm run dev -- --port 3000
-```
-
-Useful routes:
-
-```text
-http://localhost:3000/auth/sign-in
-http://localhost:3000/app
-http://localhost:3000/app/w/workspace_demo/p/project_demo/flow
-http://localhost:3000/app/w/workspace_demo/p/project_demo/archive
-```
+When a supported text asset is imported from the `Local Files` panel, CORETEX creates an `ASSET` node, stores source metadata, and includes the source file in the archive. If another graph node is selected during import, the app creates a `REFERENCES` edge from that node to the imported asset.
 
 ## Verify
 
@@ -164,50 +177,35 @@ npm audit --json
 
 `npm run build` uses `next build --webpack` because Next 16 Turbopack build attempts an internal port bind that is blocked in this sandbox.
 
-## Data Layer
-
-The repository includes Prisma models and SQL migrations for a PostgreSQL-backed product shape:
-
-```text
-prisma/schema.prisma
-prisma/migrations/0001_init/migration.sql
-prisma/migrations/0002_file_assets/migration.sql
-```
-
-For local prototype execution, the app uses `lib/mock-db.ts`. That keeps the visual prototype runnable without setting up PostgreSQL, NextAuth, object storage, pgvector, or third-party integrations.
-
 ## Current Boundaries
 
 Implemented as prototype behavior:
 
-- graph workspace
-- node and edge CRUD
-- document versions
-- scoped chat
-- message-node linking
-- message-to-node creation
-- fallback semantic extraction
-- local file import
-- search
-- time-travel view
-- archive generation
-- usage guard scaffolding
-
-Not implemented as production infrastructure:
-
-- real NextAuth provider setup
-- PostgreSQL persistence at runtime
-- real-time collaborative editing
-- Slack, Figma, Google Drive, or S3 sync
-- pgvector search
-- Stripe billing
-- organization SSO
-- production deployment hardening
+| Implemented | Not production infrastructure yet |
+| --- | --- |
+| Graph workspace | Real NextAuth provider setup |
+| Node and edge CRUD | Runtime PostgreSQL persistence |
+| Document versions | Real-time collaborative editing |
+| Scoped chat | Slack, Figma, Google Drive, or S3 sync |
+| Message-node linking | pgvector search |
+| Message-to-node creation | Stripe billing |
+| Fallback semantic extraction | Organization SSO |
+| Local file import | Production deployment hardening |
+| Search, time travel, archive generation | Production observability and audit policy |
 
 ## License
 
-This repository is **not open source**.
+This repository is public for visibility, but it is **not open source**.
 
-Copyright (c) 2026 Taewoo Park. All rights reserved.
+Copyright (c) 2026 Taewoo Park. All rights reserved. See [LICENSE](./LICENSE).
 
-See [LICENSE](LICENSE).
+## Connect
+
+<p align="center">
+  <a href="https://github.com/TaewoooPark"><img alt="GitHub" src="https://img.shields.io/badge/GitHub-000000?style=flat-square&logo=github&logoColor=white" /></a>
+  <a href="https://x.com/theoverstrcture"><img alt="X" src="https://img.shields.io/badge/X-000000?style=flat-square&logo=x&logoColor=white" /></a>
+  <a href="https://www.linkedin.com/in/taewoo-park-427a05352"><img alt="LinkedIn" src="https://img.shields.io/badge/LinkedIn-000000?style=flat-square&logo=linkedin&logoColor=white" /></a>
+  <a href="https://www.instagram.com/t.wo0_x/"><img alt="Instagram" src="https://img.shields.io/badge/Instagram-000000?style=flat-square&logo=instagram&logoColor=white" /></a>
+  <a href="https://taewoopark.com"><img alt="Website" src="https://img.shields.io/badge/taewoopark.com-000000?style=flat-square" /></a>
+  <a href="mailto:ptw151125@kaist.ac.kr"><img alt="Email" src="https://img.shields.io/badge/Email-000000?style=flat-square&logo=gmail&logoColor=white" /></a>
+</p>

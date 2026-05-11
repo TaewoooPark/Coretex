@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="760" viewBox="0 0 1440 760" role="img" aria-labelledby="title desc">
+  <title id="title">CORETEX message to node workflow</title>
+  <desc id="desc">A diagram showing a chat message promoted into a traceable context node.</desc>
+  <rect width="1440" height="760" fill="#f4f4f0"/>
+  <rect x="72" y="72" width="1296" height="616" fill="#fff" stroke="#000" stroke-width="5"/>
+  <text x="102" y="124" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="24" font-weight="700">MESSAGE TO NODE</text>
+  <rect x="104" y="162" width="420" height="454" fill="#e8e8e3" stroke="#000" stroke-width="4"/>
+  <text x="132" y="204" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700">NODE-SCOPED CHAT</text>
+  <g stroke="#000" stroke-width="3" fill="#fff">
+    <rect x="132" y="242" width="336" height="98"/>
+    <rect x="132" y="370" width="336" height="132"/>
+  </g>
+  <rect x="132" y="370" width="336" height="38" fill="#000"/>
+  <text x="154" y="395" fill="#fff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="700">DECISION MESSAGE</text>
+  <g fill="#000">
+    <rect x="158" y="274" width="248" height="6"/>
+    <rect x="158" y="300" width="168" height="6"/>
+    <rect x="158" y="436" width="246" height="6"/>
+    <rect x="158" y="464" width="188" height="6"/>
+  </g>
+  <rect x="158" y="526" width="138" height="42" fill="#000"/>
+  <text x="181" y="552" fill="#fff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="700">MAKE NODE</text>
+  <defs>
+    <marker id="arrow3" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L12,4 L0,8 Z" fill="#000"/>
+    </marker>
+  </defs>
+  <path d="M468 438 C600 408 662 324 760 308" fill="none" stroke="#000" stroke-width="6" marker-end="url(#arrow3)"/>
+  <rect x="770" y="232" width="286" height="156" fill="#fff" stroke="#000" stroke-width="5"/>
+  <rect x="770" y="232" width="286" height="42" fill="#000"/>
+  <text x="794" y="260" fill="#fff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700">DECISION NODE</text>
+  <g fill="#000">
+    <rect x="802" y="306" width="188" height="7"/>
+    <rect x="802" y="338" width="224" height="7"/>
+  </g>
+  <rect x="806" y="418" width="214" height="52" fill="#fff" stroke="#000" stroke-width="3"/>
+  <text x="832" y="450" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="700">LINK SOURCE: CHAT</text>
+  <rect x="1104" y="184" width="216" height="390" fill="#fff" stroke="#000" stroke-width="4"/>
+  <text x="1128" y="224" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700">TRACE</text>
+  <g fill="#000">
+    <rect x="1128" y="260" width="148" height="6"/>
+    <rect x="1128" y="292" width="112" height="6"/>
+    <rect x="1128" y="354" width="162" height="2"/>
+    <rect x="1128" y="392" width="138" height="6"/>
+    <rect x="1128" y="424" width="92" height="6"/>
+  </g>
+</svg>

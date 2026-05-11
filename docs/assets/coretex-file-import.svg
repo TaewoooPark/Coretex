@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="760" viewBox="0 0 1440 760" role="img" aria-labelledby="title desc">
+  <title id="title">CORETEX local file import workflow</title>
+  <desc id="desc">A diagram showing files imported as asset nodes with source metadata.</desc>
+  <rect width="1440" height="760" fill="#f4f4f0"/>
+  <rect x="74" y="74" width="1292" height="612" fill="#fff" stroke="#000" stroke-width="5"/>
+  <text x="106" y="126" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="24" font-weight="700">LOCAL FILES TO ASSET NODES</text>
+  <rect x="104" y="166" width="352" height="448" fill="#e8e8e3" stroke="#000" stroke-width="4"/>
+  <text x="130" y="204" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700">FILE LIBRARY</text>
+  <g stroke="#000" stroke-width="2" fill="#fff">
+    <rect x="130" y="238" width="276" height="42"/>
+    <rect x="154" y="298" width="252" height="42"/>
+    <rect x="130" y="358" width="276" height="42"/>
+    <rect x="154" y="418" width="252" height="42"/>
+  </g>
+  <g fill="#000">
+    <rect x="154" y="255" width="82" height="6"/>
+    <rect x="178" y="315" width="146" height="6"/>
+    <rect x="154" y="375" width="96" height="6"/>
+    <rect x="178" y="435" width="126" height="6"/>
+  </g>
+  <rect x="274" y="424" width="104" height="28" fill="#000"/>
+  <text x="292" y="443" fill="#fff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="700">IMPORT</text>
+  <defs>
+    <marker id="arrow4" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L12,4 L0,8 Z" fill="#000"/>
+    </marker>
+  </defs>
+  <path d="M408 438 C560 428 598 350 706 324" fill="none" stroke="#000" stroke-width="6" marker-end="url(#arrow4)"/>
+  <rect x="678" y="242" width="232" height="132" fill="#fff" stroke="#000" stroke-width="5"/>
+  <rect x="678" y="242" width="232" height="40" fill="#000"/>
+  <text x="704" y="268" fill="#fff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700">ASSET NODE</text>
+  <g fill="#000">
+    <rect x="710" y="312" width="142" height="7"/>
+    <rect x="710" y="342" width="170" height="7"/>
+  </g>
+  <rect x="616" y="450" width="158" height="80" fill="#fff" stroke="#000" stroke-width="4"/>
+  <text x="642" y="496" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="700">BRIEF NODE</text>
+  <path d="M774 490 C836 454 864 408 878 374" fill="none" stroke="#000" stroke-width="5" marker-end="url(#arrow4)"/>
+  <text x="826" y="458" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" font-weight="700">REFERENCES</text>
+  <rect x="1000" y="188" width="288" height="396" fill="#fff" stroke="#000" stroke-width="4"/>
+  <text x="1028" y="230" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700">SOURCE METADATA</text>
+  <g fill="#000">
+    <rect x="1028" y="270" width="202" height="7"/>
+    <rect x="1028" y="312" width="234" height="7"/>
+    <rect x="1028" y="354" width="168" height="7"/>
+    <rect x="1028" y="420" width="234" height="2"/>
+    <rect x="1028" y="460" width="128" height="7"/>
+    <rect x="1028" y="502" width="212" height="7"/>
+  </g>
+</svg>
