@@ -1,0 +1,337 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String            @id @default(cuid())
+  email        String            @unique
+  name         String?
+  image        String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  memberships  WorkspaceMember[]
+  nodesCreated ContextNode[]     @relation("NodeCreator")
+  messages     Message[]
+  versions     DocumentVersion[]
+}
+
+model Workspace {
+  id        String            @id @default(cuid())
+  name      String
+  slug      String            @unique
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  members   WorkspaceMember[]
+  projects  Project[]
+  billing   BillingAccount?
+}
+
+model WorkspaceMember {
+  id          String        @id @default(cuid())
+  workspaceId String
+  userId      String
+  role        WorkspaceRole @default(MEMBER)
+  createdAt   DateTime      @default(now())
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+}
+
+enum WorkspaceRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+model Project {
+  id          String           @id @default(cuid())
+  workspaceId String
+  name        String
+  description String?
+  status      ProjectStatus    @default(ACTIVE)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  archivedAt  DateTime?
+  workspace   Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  nodes       ContextNode[]
+  edges       NodeEdge[]
+  messages    Message[]
+  tags        SemanticTag[]
+  events      ActivityEvent[]
+  archives    ProjectArchive[]
+}
+
+enum ProjectStatus {
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+model ContextNode {
+  id               String            @id @default(cuid())
+  projectId        String
+  title            String
+  type             NodeType
+  status           NodeStatus        @default(RAW)
+  summary          String?
+  content          Json?
+  positionX        Float             @default(0)
+  positionY        Float             @default(0)
+  width            Float?
+  height           Float?
+  createdById      String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  deletedAt        DateTime?
+  currentVersionNo Int               @default(1)
+  metadata         Json?
+  aiSummary        String?
+  confidence       Float?
+  project          Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy        User              @relation("NodeCreator", fields: [createdById], references: [id])
+  outgoingEdges    NodeEdge[]        @relation("EdgeFrom")
+  incomingEdges    NodeEdge[]        @relation("EdgeTo")
+  versions         DocumentVersion[]
+  linkedMessages   MessageNodeLink[]
+  tags             NodeTag[]
+  decisions        Decision[]
+  events           ActivityEvent[]
+
+  @@index([projectId])
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum NodeType {
+  IDEA
+  BRIEF
+  RESEARCH
+  DRAFT
+  EXPERIMENT
+  FEEDBACK
+  DECISION
+  TASK
+  ASSET
+  FINAL
+  ARCHIVE
+}
+
+enum NodeStatus {
+  RAW
+  IN_PROGRESS
+  REVIEW
+  DECIDED
+  DISCARDED
+  FINALIZED
+}
+
+model NodeEdge {
+  id         String      @id @default(cuid())
+  projectId  String
+  fromNodeId String
+  toNodeId   String
+  type       EdgeType
+  label      String?
+  weight     Float       @default(1)
+  confidence Float?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  deletedAt  DateTime?
+  project    Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  fromNode   ContextNode @relation("EdgeFrom", fields: [fromNodeId], references: [id], onDelete: Cascade)
+  toNode     ContextNode @relation("EdgeTo", fields: [toNodeId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([fromNodeId])
+  @@index([toNodeId])
+  @@unique([fromNodeId, toNodeId, type])
+}
+
+enum EdgeType {
+  DERIVES_FROM
+  SUPPORTS
+  CONTRADICTS
+  REFINES
+  REPLACES
+  REFERENCES
+  DECIDES
+  BLOCKS
+}
+
+model DocumentVersion {
+  id            String      @id @default(cuid())
+  nodeId        String
+  versionNo     Int
+  title         String?
+  content       Json
+  plainText     String?
+  changeSummary String?
+  createdById   String
+  createdAt     DateTime    @default(now())
+  node          ContextNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  createdBy     User        @relation(fields: [createdById], references: [id])
+
+  @@unique([nodeId, versionNo])
+  @@index([nodeId])
+  @@index([createdAt])
+}
+
+model Message {
+  id          String            @id @default(cuid())
+  projectId   String
+  authorId    String
+  content     String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  deletedAt   DateTime?
+  scopeNodeId String?
+  aiProcessed Boolean           @default(false)
+  project     Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  author      User              @relation(fields: [authorId], references: [id])
+  linkedNodes MessageNodeLink[]
+  tags        MessageTag[]
+
+  @@index([projectId])
+  @@index([scopeNodeId])
+  @@index([createdAt])
+}
+
+model MessageNodeLink {
+  id         String      @id @default(cuid())
+  messageId  String
+  nodeId     String
+  source     LinkSource  @default(MANUAL)
+  confidence Float?
+  reason     String?
+  createdAt  DateTime    @default(now())
+  message    Message     @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  node       ContextNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, nodeId])
+}
+
+enum LinkSource {
+  MANUAL
+  AI
+  RULE
+}
+
+model SemanticTag {
+  id          String       @id @default(cuid())
+  projectId   String
+  name        String
+  normalized  String
+  description String?
+  createdAt   DateTime     @default(now())
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  nodes       NodeTag[]
+  messages    MessageTag[]
+
+  @@unique([projectId, normalized])
+}
+
+model NodeTag {
+  id         String      @id @default(cuid())
+  nodeId     String
+  tagId      String
+  confidence Float?
+  source     LinkSource  @default(MANUAL)
+  createdAt  DateTime    @default(now())
+  node       ContextNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  tag        SemanticTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([nodeId, tagId])
+}
+
+model MessageTag {
+  id         String      @id @default(cuid())
+  messageId  String
+  tagId      String
+  confidence Float?
+  source     LinkSource  @default(MANUAL)
+  createdAt  DateTime    @default(now())
+  message    Message     @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  tag        SemanticTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, tagId])
+}
+
+model Decision {
+  id        String      @id @default(cuid())
+  nodeId    String
+  statement String
+  rationale String?
+  outcome   String?
+  decidedAt DateTime    @default(now())
+  createdAt DateTime    @default(now())
+  node      ContextNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+}
+
+model ActivityEvent {
+  id        String            @id @default(cuid())
+  projectId String
+  nodeId    String?
+  actorId   String?
+  type      ActivityEventType
+  payload   Json?
+  createdAt DateTime          @default(now())
+  project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  node      ContextNode?      @relation(fields: [nodeId], references: [id])
+
+  @@index([projectId])
+  @@index([nodeId])
+  @@index([createdAt])
+}
+
+enum ActivityEventType {
+  NODE_CREATED
+  NODE_UPDATED
+  NODE_DELETED
+  EDGE_CREATED
+  EDGE_DELETED
+  VERSION_CREATED
+  MESSAGE_CREATED
+  MESSAGE_LINKED
+  TAG_CREATED
+  TAG_LINKED
+  DECISION_CREATED
+  ARCHIVE_CREATED
+}
+
+model ProjectArchive {
+  id        String   @id @default(cuid())
+  projectId String
+  title     String
+  summary   String?
+  content   Json
+  createdAt DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model BillingAccount {
+  id                String      @id @default(cuid())
+  workspaceId       String      @unique
+  plan              BillingPlan @default(FREE)
+  nodeLimit         Int         @default(100)
+  storageLimitMb    Int         @default(500)
+  aiExtractionLimit Int         @default(100)
+  aiExtractionCount Int         @default(0)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  workspace         Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+enum BillingPlan {
+  FREE
+  TEAM
+  BUSINESS
+  ENTERPRISE
+}
