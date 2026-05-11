@@ -19,11 +19,11 @@ export async function POST(request: Request, context: { params: Promise<{ nodeId
     "restoreVersionNo" in body &&
     typeof (body as { restoreVersionNo?: unknown }).restoreVersionNo === "number"
   ) {
-    return json(restoreVersion(params.nodeId, (body as { restoreVersionNo: number; at?: string }).restoreVersionNo, (body as { at?: string }).at));
+    return json(await restoreVersion(params.nodeId, (body as { restoreVersionNo: number; at?: string }).restoreVersionNo, (body as { at?: string }).at));
   }
   const parsed = createVersionSchema.safeParse(body);
   if (!parsed.success) {
     return json(fail("VALIDATION_ERROR", parsed.error.issues[0]?.message ?? "Invalid version payload."));
   }
-  return json(createVersion(params.nodeId, parsed.data), { status: 201 });
+  return json(await createVersion(params.nodeId, parsed.data), { status: 201 });
 }

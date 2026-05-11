@@ -1,8 +1,17 @@
+import { BrutalButton } from "@/components/brutal/BrutalButton";
 import { BrutalBadge } from "@/components/brutal/BrutalBadge";
 
-import { BrutalButton } from "@/components/brutal/BrutalButton";
-
-export function MessageCard({ message, activeNodeId, onLink }: { message: any; activeNodeId?: string; onLink?: (messageId: string) => void }) {
+export function MessageCard({
+  message,
+  activeNodeId,
+  onLink,
+  onCreateNode
+}: {
+  message: any;
+  activeNodeId?: string;
+  onLink?: (messageId: string) => void;
+  onCreateNode?: (messageId: string) => void;
+}) {
   const linkedToActive = activeNodeId ? message.linkedNodes?.some((link: any) => link.nodeId === activeNodeId) : true;
   return (
     <article className="border-2 border-black bg-white">
@@ -25,11 +34,18 @@ export function MessageCard({ message, activeNodeId, onLink }: { message: any; a
           <span className="text-[11px] uppercase">Tags:</span>
           {message.tags?.length ? message.tags.map((tag: string) => <BrutalBadge key={tag}>#{tag}</BrutalBadge>) : <span className="text-[11px] uppercase text-[var(--color-muted)]">None</span>}
         </div>
-        {activeNodeId && !linkedToActive && onLink ? (
-          <BrutalButton size="sm" onClick={() => onLink(message.id)}>
-            Link To This Node
-          </BrutalButton>
-        ) : null}
+        <div className="flex flex-wrap gap-2">
+          {activeNodeId && !linkedToActive && onLink ? (
+            <BrutalButton size="sm" onClick={() => onLink(message.id)}>
+              Link To This Node
+            </BrutalButton>
+          ) : null}
+          {onCreateNode ? (
+            <BrutalButton size="sm" variant="inverse" onClick={() => onCreateNode(message.id)}>
+              Make Node
+            </BrutalButton>
+          ) : null}
+        </div>
       </footer>
     </article>
   );

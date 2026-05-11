@@ -66,6 +66,7 @@ model Project {
   tags        SemanticTag[]
   events      ActivityEvent[]
   archives    ProjectArchive[]
+  fileAssets  FileAsset[]
 }
 
 enum ProjectStatus {
@@ -103,6 +104,7 @@ model ContextNode {
   tags             NodeTag[]
   decisions        Decision[]
   events           ActivityEvent[]
+  sourceFiles      FileAsset[]        @relation("ImportedFileNode")
 
   @@index([projectId])
   @@index([type])
@@ -303,7 +305,37 @@ enum ActivityEventType {
   TAG_CREATED
   TAG_LINKED
   DECISION_CREATED
+  FILE_IMPORTED
   ARCHIVE_CREATED
+}
+
+model FileAsset {
+  id             String        @id @default(cuid())
+  projectId      String
+  parentId       String?
+  name           String
+  path           String
+  kind           FileAssetKind
+  mimeType       String?
+  sizeBytes      Int           @default(0)
+  checksum       String?
+  importedNodeId String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  project        Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  parent         FileAsset?    @relation("FileAssetTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children       FileAsset[]   @relation("FileAssetTree")
+  importedNode   ContextNode?  @relation("ImportedFileNode", fields: [importedNodeId], references: [id], onDelete: SetNull)
+
+  @@unique([projectId, path])
+  @@index([projectId])
+  @@index([parentId])
+  @@index([importedNodeId])
+}
+
+enum FileAssetKind {
+  FOLDER
+  FILE
 }
 
 model ProjectArchive {

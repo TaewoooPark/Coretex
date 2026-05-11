@@ -15,6 +15,7 @@ export type ProjectArchiveContent = {
     messageCount: number;
     decisionCount: number;
     versionCount: number;
+    importedFileCount: number;
   };
   decisionTimeline: {
     nodeId: string;
@@ -49,6 +50,13 @@ export type ProjectArchiveContent = {
     linkedNodeIds: string[];
     createdAt: string;
   }[];
+  sourceFiles: {
+    id: string;
+    path: string;
+    importedNodeId?: string;
+    checksum?: string;
+    sizeBytes: number;
+  }[];
 };
 
 export function buildProjectArchiveContent(db: CoretexDb, projectId: string): ProjectArchiveContent {
@@ -62,6 +70,7 @@ export function buildProjectArchiveContent(db: CoretexDb, projectId: string): Pr
   const versions = db.versions.filter((version) => nodeIds.has(version.nodeId));
   const decisions = db.decisions.filter((decision) => nodeIds.has(decision.nodeId));
   const messages = db.messages.filter((message) => message.projectId === projectId && !message.deletedAt);
+  const sourceFiles = db.fileAssets.filter((file) => file.projectId === projectId && file.kind === "FILE");
 
   return {
     project: {
@@ -76,7 +85,8 @@ export function buildProjectArchiveContent(db: CoretexDb, projectId: string): Pr
       edgeCount: edges.length,
       messageCount: messages.length,
       decisionCount: decisions.length,
-      versionCount: versions.length
+      versionCount: versions.length,
+      importedFileCount: sourceFiles.length
     },
     decisionTimeline: decisions
       .map((decision) => {
@@ -119,6 +129,13 @@ export function buildProjectArchiveContent(db: CoretexDb, projectId: string): Pr
       content: message.content,
       linkedNodeIds: db.messageNodeLinks.filter((link) => link.messageId === message.id).map((link) => link.nodeId),
       createdAt: message.createdAt
+    })),
+    sourceFiles: sourceFiles.map((file) => ({
+      id: file.id,
+      path: file.path,
+      importedNodeId: file.importedNodeId,
+      checksum: file.checksum,
+      sizeBytes: file.sizeBytes
     }))
   };
 }

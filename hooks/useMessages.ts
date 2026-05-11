@@ -44,6 +44,15 @@ export function useMessageMutations(projectId: string, nodeId?: string) {
           body: JSON.stringify({ nodeId: targetNodeId, reason })
         }),
       onSuccess: invalidate
+    }),
+    createNodeFromMessage: useMutation({
+      mutationFn: ({ messageId, parentNodeId }: { messageId: string; parentNodeId?: string }) =>
+        fetchJson(`/api/messages/${messageId}/create-node`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ parentNodeId, edgeType: "REFERENCES" })
+        }),
+      onSuccess: invalidate
     })
   };
 }

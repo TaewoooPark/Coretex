@@ -1,0 +1,7 @@
+Interview notes
+
+New teammates repeatedly ask why the final plan exists because folder names, chat messages, and document versions are separated.
+
+#onboarding #context-loss
+
+Conclusion: the asset library should attach source files to graph nodes so evidence is visible in the same workspace.

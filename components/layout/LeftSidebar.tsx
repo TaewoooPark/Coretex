@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { NodeCreateDialog } from "@/components/flow/NodeCreateDialog";
+import { FileLibraryPanel } from "@/components/files/FileLibraryPanel";
 import { BrutalButton } from "@/components/brutal/BrutalButton";
 import { BrutalInput } from "@/components/brutal/BrutalInput";
 import { BrutalSelect } from "@/components/brutal/BrutalSelect";
@@ -70,6 +71,7 @@ export function LeftSidebar({ projectId, nodes, readOnly }: { projectId: string;
             ))}
           </div>
         </section>
+        <FileLibraryPanel projectId={projectId} readOnly={readOnly} />
       </div>
       <NodeCreateDialog
         open={createOpen}

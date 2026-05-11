@@ -2,6 +2,21 @@
   "name": "coretex",
   "version": "0.1.0",
   "private": true,
+  "license": "UNLICENSED",
+  "keywords": [
+    "typescript",
+    "react",
+    "nextjs",
+    "knowledge-graph",
+    "information-visualization",
+    "local-first",
+    "markdown",
+    "llm",
+    "document-management",
+    "collaboration",
+    "react-flow",
+    "zustand"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",

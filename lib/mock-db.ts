@@ -12,6 +12,7 @@ import type {
   NodeTag,
   Project,
   ProjectArchive,
+  ProjectFileAsset,
   SemanticTag,
   User,
   Workspace,
@@ -36,6 +37,7 @@ export type CoretexDb = {
   decisions: Decision[];
   events: ActivityEvent[];
   archives: ProjectArchive[];
+  fileAssets: ProjectFileAsset[];
   aiSuggestions: AiSuggestion[];
 };
 
@@ -88,6 +90,7 @@ export function createEmptyDb(): CoretexDb {
     decisions: [],
     events: [],
     archives: [],
+    fileAssets: [],
     aiSuggestions: []
   };
 }
@@ -473,10 +476,16 @@ export function getDb(): CoretexDb {
   if (!globalThis.__CORETEX_DB__) {
     globalThis.__CORETEX_DB__ = seedDemoData();
   }
+  ensureDbShape(globalThis.__CORETEX_DB__);
   return globalThis.__CORETEX_DB__;
 }
 
 export function resetDemoData(): CoretexDb {
   globalThis.__CORETEX_DB__ = seedDemoData();
   return globalThis.__CORETEX_DB__;
+}
+
+function ensureDbShape(db: CoretexDb) {
+  db.fileAssets ??= [];
+  db.aiSuggestions ??= [];
 }

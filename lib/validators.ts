@@ -60,9 +60,24 @@ export const linkMessageSchema = z.object({
   reason: z.string().trim().max(300).optional()
 });
 
+export const createNodeFromMessageSchema = z.object({
+  title: z.string().trim().min(1).max(160).optional(),
+  type: z.enum(nodeTypes).optional(),
+  summary: z.string().trim().max(600).optional(),
+  parentNodeId: z.string().optional(),
+  edgeType: z.enum(edgeTypes).optional(),
+  position: positionSchema.optional()
+});
+
 export const extractContextSchema = z.object({
   projectId: z.string(),
   sourceType: z.enum(["MESSAGE", "DOCUMENT"]),
   sourceId: z.string(),
   text: z.string()
+});
+
+export const importProjectFileSchema = z.object({
+  path: z.string().trim().min(1).max(500),
+  parentNodeId: z.string().optional(),
+  edgeType: z.enum(edgeTypes).optional()
 });

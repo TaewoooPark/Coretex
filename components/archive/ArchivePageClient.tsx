@@ -63,6 +63,7 @@ function ArchiveInner({ workspaceId, projectId }: { workspaceId: string; project
             <Panel title="Discarded Alternatives" items={content.discardedAlternatives.map((item) => item.title)} empty="No discarded alternatives" />
             <Panel title="Key Messages" items={content.keyMessages.map((item) => item.content)} />
             <Panel title="Major Tags" items={Array.from(new Set(content.nodeGenealogy.flatMap((item) => item.tags))).map((tag) => `#${tag}`)} />
+            <Panel title="Source Files" items={content.sourceFiles.map((item) => `${item.path} -> ${item.importedNodeId ?? "unlinked"}`)} empty="No imported source files" />
           </section>
         </div>
       )}

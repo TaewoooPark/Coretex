@@ -29,3 +29,45 @@ Status: OK.
 - Documentation alignment: README and this review document map the implementation to `plan.md`; `.env.example` records the expected PostgreSQL URL shape for Prisma.
 
 Result: OK.
+
+## Re-Run Goal Loop: Review Pass 3
+
+Status: patched.
+
+- Functionality: Chat was missing message-to-node creation, document saves did not feed DOCUMENT extraction, file/folder work was only an abstract future boundary, and search did not include document body text.
+- Performance: File scanning is bounded by depth and file size; imports are text-only and capped at 1MB to keep local execution predictable.
+- Optimality: Added `lib/files.ts` for path normalization, library scanning, import safety, and TipTap conversion instead of embedding filesystem logic in route handlers.
+- Integrity: Added traversal guards, duplicate import handling, `FILE_IMPORTED` events, Prisma `FileAsset` model/migration, and ActivityEvent logging for AI tag/link acceptance.
+- Completeness: Local file library import now creates traceable `ASSET` nodes, links them to the active context node, stores source metadata, and includes source files in archive output.
+- Consistency: New APIs follow the existing `ApiResponse` shape and service-layer pattern; UI uses the same brutalist components and React Query invalidation.
+- Documentation alignment: README now documents the local file library, message-to-node creation, document extraction, and updated PostgreSQL migrations.
+
+Result: OK after patches.
+
+## Re-Run Goal Loop: Review Pass 4
+
+Status: OK.
+
+- Functionality: Runtime smoke tests verified file listing, file import into `ASSET` node, chat message creation, message-to-node creation, and document body search.
+- Performance: `npm run build` completes; file import does not add unbounded filesystem traversal or large binary loading.
+- Optimality: Feature expansion stays inside existing service, hook, and component boundaries without introducing competing state models.
+- Integrity: `npm run test` passes 19 tests, including new file safety, file import, message-to-node, and document-body search coverage.
+- Completeness: The previously degraded chat, document, and file/folder flows are now concrete MVP workflows instead of placeholders.
+- Consistency: Prisma schema validates with the new file asset model and generated client succeeds.
+- Documentation alignment: README and this review now describe the implemented file and chat workflows.
+
+Result: OK.
+
+## Re-Run Goal Loop: Review Pass 5
+
+Status: OK.
+
+- Functionality: Re-checked the implemented routes and UI surfaces against `plan.md` critical flows: graph, docs, versions, chat, semantic links, time travel, archive, search, and local file assets.
+- Performance: No new heavy client dependencies or unbounded server loops were added; `npm audit --json` reports zero vulnerabilities.
+- Optimality: Local file integration is implemented as an MVP storage bridge while keeping future S3/external-provider migration isolated behind `lib/files.ts` and `FileAsset`.
+- Integrity: `npx tsc --noEmit`, `npx prisma validate`, `npm run prisma:generate`, `npm run seed`, `npm run test`, `npm run build`, and runtime API smoke tests pass.
+- Completeness: Two consecutive post-patch reviews are OK.
+- Consistency: Data model, API naming, UI labels, archive content, tests, and docs now agree.
+- Documentation alignment: The current state is explicitly differentiated from production-only NextAuth/PostgreSQL/live SaaS integrations.
+
+Result: OK.

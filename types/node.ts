@@ -53,6 +53,7 @@ export type ActivityEventType =
   | "TAG_CREATED"
   | "TAG_LINKED"
   | "DECISION_CREATED"
+  | "FILE_IMPORTED"
   | "ARCHIVE_CREATED";
 
 export type JsonRecord = Record<string, unknown>;
@@ -217,6 +218,21 @@ export type ProjectArchive = {
   summary?: string;
   content: JsonRecord;
   createdAt: string;
+};
+
+export type ProjectFileAsset = {
+  id: string;
+  projectId: string;
+  parentId?: string;
+  name: string;
+  path: string;
+  kind: "FOLDER" | "FILE";
+  mimeType?: string;
+  sizeBytes: number;
+  checksum?: string;
+  importedNodeId?: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type BillingPlan = "FREE" | "TEAM" | "BUSINESS" | "ENTERPRISE";

@@ -18,13 +18,15 @@ export function ChatLayer({ projectId, nodeId, readOnly }: { projectId: string; 
               key={message.id}
               message={message}
               activeNodeId={nodeId}
-              onLink={(messageId) => nodeId && mutations.linkMessage.mutate({ messageId, targetNodeId: nodeId, reason: "Manual node chat link" })}
+              onLink={!readOnly ? (messageId) => nodeId && mutations.linkMessage.mutate({ messageId, targetNodeId: nodeId, reason: "Manual node chat link" }) : undefined}
+              onCreateNode={!readOnly ? (messageId) => mutations.createNodeFromMessage.mutate({ messageId, parentNodeId: nodeId }) : undefined}
             />
           ))
         ) : (
           <div className="border-2 border-black bg-white p-3 text-xs uppercase text-[var(--color-muted)]">No messages yet</div>
         )}
       </div>
+      {mutations.createNodeFromMessage.error ? <div className="border-2 border-black bg-white p-2 text-xs uppercase">{mutations.createNodeFromMessage.error.message}</div> : null}
     </div>
   );
 }

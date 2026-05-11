@@ -1,5 +1,18 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { createEdge, createMessage, createNode, createProject, createVersion, deleteNode, getGraph, listProjects } from "@/lib/services";
+import {
+  createEdge,
+  createMessage,
+  createNode,
+  createNodeFromMessage,
+  createProject,
+  createVersion,
+  deleteNode,
+  getGraph,
+  importProjectFile,
+  listProjectFiles,
+  listProjects,
+  searchProject
+} from "@/lib/services";
 import { DEMO_PROJECT_ID, DEMO_WORKSPACE_ID, getDb, resetDemoData } from "@/lib/mock-db";
 
 describe("core API service integration", () => {
@@ -39,15 +52,57 @@ describe("core API service integration", () => {
     expect(getDb().tags.some((tag) => tag.normalized === "launch")).toBe(true);
   });
 
-  it("increments currentVersionNo on document save", () => {
-    const result = createVersion("node_brief", {
+  it("increments currentVersionNo on document save and extracts document context", async () => {
+    const result = await createVersion("node_brief", {
       title: "Brief v3",
       content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Updated" }] }] },
-      plainText: "Updated",
+      plainText: "Updated #document-context",
       changeSummary: "Test save"
     });
     expect(result.ok).toBe(true);
     expect(getDb().nodes.find((node) => node.id === "node_brief")?.currentVersionNo).toBe(3);
+    expect(getDb().nodeTags.some((item) => item.nodeId === "node_brief")).toBe(true);
+  });
+
+  it("creates a traceable node from a chat message", async () => {
+    const message = await createMessage(DEMO_PROJECT_ID, {
+      content: "Decision: approve the local file import path for #assets"
+    });
+    expect(message.ok).toBe(true);
+    const result = await createNodeFromMessage(message.ok ? message.data.message.id : "");
+    expect(result.ok).toBe(true);
+    const nodeId = result.ok ? result.data.node.id : "";
+    expect(getDb().messageNodeLinks.some((link) => link.nodeId === nodeId)).toBe(true);
+    expect(getDb().decisions.some((decision) => decision.nodeId === nodeId)).toBe(true);
+  });
+
+  it("lists and imports local project files as ASSET nodes", async () => {
+    const files = await listProjectFiles(DEMO_PROJECT_ID);
+    expect(files.ok).toBe(true);
+    expect(files.ok && files.data.files.some((file) => file.relativePath === "briefs/launch-brief.md")).toBe(true);
+
+    const result = await importProjectFile(DEMO_PROJECT_ID, {
+      path: "briefs/launch-brief.md",
+      parentNodeId: "node_brief",
+      edgeType: "REFERENCES"
+    });
+    expect(result.ok).toBe(true);
+    const node = result.ok ? result.data.node : undefined;
+    expect(node?.type).toBe("ASSET");
+    expect(getDb().fileAssets.some((asset) => asset.importedNodeId === node?.id)).toBe(true);
+    expect(getDb().edges.some((edge) => edge.fromNodeId === "node_brief" && edge.toNodeId === node?.id)).toBe(true);
+  });
+
+  it("searches document body text from saved versions", async () => {
+    await createVersion("node_brief", {
+      title: "Brief searchable",
+      content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Document body contains orbital-context-marker" }] }] },
+      plainText: "Document body contains orbital-context-marker",
+      changeSummary: "Search coverage"
+    });
+    const result = searchProject(DEMO_PROJECT_ID, "orbital-context-marker");
+    expect(result.ok).toBe(true);
+    expect(result.ok && result.data.results.some((item) => item.type === "NODE" && item.id === "node_brief")).toBe(true);
   });
 
   it("returns old state in time-travel graph query", () => {

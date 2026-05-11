@@ -1,5 +1,6 @@
 import { buildProjectArchiveContent } from "./archive";
 import { extractContext } from "./ai/extractContext";
+import { fileTextToTipTapDoc, readImportableProjectFile, scanProjectLibrary } from "./files";
 import { activeEdgesForCycle, isVisibleAt, resolveVersionAt, wouldCreateCycle } from "./graph";
 import { DEMO_USER_ID, getDb, nextId, type CoretexDb } from "./mock-db";
 import { assertProjectAccess, getWorkspaceRole, hasRoleAtLeast } from "./permissions";
@@ -19,6 +20,7 @@ import type {
   NodeTag,
   NodeType,
   ProjectArchive,
+  ProjectFileAsset,
   SemanticTag
 } from "@/types/node";
 
@@ -435,7 +437,7 @@ export function listVersions(nodeId: string, actor: Actor = defaultActor) {
   });
 }
 
-export function createVersion(
+export async function createVersion(
   nodeId: string,
   input: {
     title?: string;
@@ -472,10 +474,11 @@ export function createVersion(
   node.content = input.content;
   node.updatedAt = now;
   pushEvent(db, node.projectId, "VERSION_CREATED", actor.userId ?? DEMO_USER_ID, node.id, { versionNo });
-  return ok({ version, node });
+  const extraction = await runExtractionForSource(db, node.projectId, "DOCUMENT", version.id, version.plainText ?? "", node.id);
+  return ok({ version, node, extraction });
 }
 
-export function restoreVersion(nodeId: string, versionNo: number, at?: string, actor: Actor = defaultActor) {
+export async function restoreVersion(nodeId: string, versionNo: number, at?: string, actor: Actor = defaultActor) {
   const db = getDb();
   const version = db.versions.find((item) => item.nodeId === nodeId && item.versionNo === versionNo);
   if (!version) {
@@ -574,6 +577,160 @@ export function linkMessageToNode(messageId: string, input: { nodeId: string; re
   return ok({ link });
 }
 
+export async function createNodeFromMessage(
+  messageId: string,
+  input: {
+    title?: string;
+    type?: NodeType;
+    summary?: string;
+    parentNodeId?: string;
+    edgeType?: EdgeType;
+    position?: { x: number; y: number };
+  } = {},
+  actor: Actor = defaultActor
+) {
+  const db = getDb();
+  const message = db.messages.find((item) => item.id === messageId && !item.deletedAt);
+  if (!message) {
+    return fail("MESSAGE_NOT_FOUND", "The selected message does not exist or has been deleted.");
+  }
+  const access = assertProjectAccess(db, message.projectId, actor.userId ?? DEMO_USER_ID, "MEMBER");
+  if (!access.ok) {
+    return fail(access.code, access.message);
+  }
+  const title = input.title ?? titleFromMessage(message.content);
+  const type = input.type ?? inferNodeTypeFromText(message.content);
+  const created = await createNode(
+    message.projectId,
+    {
+      title,
+      type,
+      status: type === "DECISION" ? "DECIDED" : "RAW",
+      summary: input.summary ?? message.content.slice(0, 240),
+      content: docFromText(message.content),
+      parentNodeId: input.parentNodeId,
+      edgeType: input.edgeType ?? "REFERENCES",
+      position: input.position
+    },
+    actor
+  );
+  if (!created.ok) {
+    return created;
+  }
+  const node = created.data.node;
+  const link = ensureMessageNodeLink(db, message.id, node.id, "MANUAL", 1, "Created node from message");
+  for (const messageTag of db.messageTags.filter((item) => item.messageId === message.id)) {
+    ensureNodeTag(db, node.id, messageTag.tagId, messageTag.confidence ?? 1, messageTag.source);
+  }
+  if (type === "DECISION") {
+    db.decisions.push({
+      id: nextId(db, "decision"),
+      nodeId: node.id,
+      statement: message.content.slice(0, 240),
+      rationale: "Created from linked chat message.",
+      decidedAt: new Date().toISOString(),
+      createdAt: new Date().toISOString()
+    });
+    pushEvent(db, message.projectId, "DECISION_CREATED", actor.userId ?? DEMO_USER_ID, node.id, { messageId });
+  }
+  pushEvent(db, message.projectId, "MESSAGE_LINKED", actor.userId ?? DEMO_USER_ID, node.id, { messageId });
+  return ok({ node, link });
+}
+
+export async function listProjectFiles(projectId: string, actor: Actor = defaultActor) {
+  const db = getDb();
+  const access = assertProjectAccess(db, projectId, actor.userId ?? DEMO_USER_ID);
+  if (!access.ok) {
+    return fail(access.code, access.message);
+  }
+  const entries = await scanProjectLibrary(projectId);
+  const importedByPath = new Map(db.fileAssets.filter((asset) => asset.projectId === projectId).map((asset) => [asset.path, asset]));
+  return ok({
+    root: projectId,
+    files: entries.map((entry) => {
+      const imported = importedByPath.get(entry.relativePath);
+      return {
+        ...entry,
+        assetId: imported?.id,
+        importedNodeId: imported?.importedNodeId
+      };
+    })
+  });
+}
+
+export async function importProjectFile(
+  projectId: string,
+  input: { path: string; parentNodeId?: string; edgeType?: EdgeType },
+  actor: Actor = defaultActor
+) {
+  const db = getDb();
+  const access = assertProjectAccess(db, projectId, actor.userId ?? DEMO_USER_ID, "MEMBER");
+  if (!access.ok) {
+    return fail(access.code, access.message);
+  }
+
+  let file;
+  try {
+    file = await readImportableProjectFile(projectId, input.path);
+  } catch {
+    return fail("FILE_NOT_IMPORTABLE", "The selected file is outside the project library, too large, or not a supported text format.");
+  }
+
+  const existing = db.fileAssets.find((asset) => asset.projectId === projectId && asset.path === file.relativePath);
+  if (existing?.importedNodeId && db.nodes.some((node) => node.id === existing.importedNodeId && !node.deletedAt)) {
+    return ok({ file: existing, node: db.nodes.find((node) => node.id === existing.importedNodeId) });
+  }
+
+  const created = await createNode(
+    projectId,
+    {
+      title: file.name,
+      type: "ASSET",
+      status: "RAW",
+      summary: `Imported local file: ${file.relativePath}`,
+      content: fileTextToTipTapDoc(file),
+      parentNodeId: input.parentNodeId,
+      edgeType: input.edgeType ?? "REFERENCES",
+      position: { x: 120 + db.nodes.filter((node) => node.projectId === projectId).length * 36, y: 520 }
+    },
+    actor
+  );
+  if (!created.ok) {
+    return created;
+  }
+  const now = new Date().toISOString();
+  const fileAsset: ProjectFileAsset = {
+    id: existing?.id ?? nextId(db, "file"),
+    projectId,
+    name: file.name,
+    path: file.relativePath,
+    kind: "FILE",
+    mimeType: mimeTypeForExtension(file.extension),
+    sizeBytes: file.sizeBytes,
+    checksum: file.checksum,
+    importedNodeId: created.data.node.id,
+    createdAt: existing?.createdAt ?? now,
+    updatedAt: now
+  };
+  if (existing) {
+    Object.assign(existing, fileAsset);
+  } else {
+    db.fileAssets.push(fileAsset);
+  }
+  created.data.node.metadata = {
+    ...(created.data.node.metadata ?? {}),
+    sourceFile: {
+      path: file.relativePath,
+      checksum: file.checksum,
+      sizeBytes: file.sizeBytes,
+      updatedAt: file.updatedAt
+    }
+  };
+  pushEvent(db, projectId, "FILE_IMPORTED", actor.userId ?? DEMO_USER_ID, created.data.node.id, { path: file.relativePath, fileAssetId: fileAsset.id });
+  await runExtractionForSource(db, projectId, "DOCUMENT", created.data.node.id, file.text, created.data.node.id);
+  return ok({ file: fileAsset, node: created.data.node });
+}
+
 export async function extractContextForApi(
   input: { projectId: string; sourceType: "MESSAGE" | "DOCUMENT"; sourceId: string; text: string },
   actor: Actor = defaultActor
@@ -583,7 +740,12 @@ export async function extractContextForApi(
   if (!access.ok) {
     return fail(access.code, access.message);
   }
-  const extraction = await runExtractionForSource(db, input.projectId, input.sourceType, input.sourceId, input.text);
+  const sourceNodeId =
+    input.sourceType === "DOCUMENT"
+      ? db.versions.find((version) => version.id === input.sourceId)?.nodeId ??
+        db.nodes.find((node) => node.id === input.sourceId && node.projectId === input.projectId)?.id
+      : undefined;
+  const extraction = await runExtractionForSource(db, input.projectId, input.sourceType, input.sourceId, input.text, sourceNodeId);
   return ok(extraction);
 }
 
@@ -614,18 +776,54 @@ export function resolveAiSuggestion(suggestionId: string, action: "ACCEPT" | "RE
     suggestion.status = "REJECTED";
     return ok({ suggestion });
   }
-  suggestion.status = "ACCEPTED";
   const payload = suggestion.payload;
   if (suggestion.kind === "TAG" && typeof payload.name === "string") {
+    const tagWasNew = !db.tags.some((tag) => tag.projectId === suggestion.projectId && tag.normalized === normalizeTag(payload.name as string));
     const tag = ensureTag(db, suggestion.projectId, payload.name);
+    if (tagWasNew) {
+      pushEvent(db, suggestion.projectId, "TAG_CREATED", actor.userId ?? DEMO_USER_ID, undefined, { tagId: tag.id, suggestionId });
+    }
     if (suggestion.sourceType === "MESSAGE") {
+      const linkWasNew = !db.messageTags.some((item) => item.messageId === suggestion.sourceId && item.tagId === tag.id);
       ensureMessageTag(db, suggestion.sourceId, tag.id, suggestion.confidence, "AI");
+      if (linkWasNew) {
+        pushEvent(db, suggestion.projectId, "TAG_LINKED", actor.userId ?? DEMO_USER_ID, undefined, { tagId: tag.id, messageId: suggestion.sourceId });
+      }
     } else if (typeof payload.nodeId === "string") {
+      const linkWasNew = !db.nodeTags.some((item) => item.nodeId === payload.nodeId && item.tagId === tag.id);
       ensureNodeTag(db, payload.nodeId, tag.id, suggestion.confidence, "AI");
+      if (linkWasNew) {
+        pushEvent(db, suggestion.projectId, "TAG_LINKED", actor.userId ?? DEMO_USER_ID, payload.nodeId, { tagId: tag.id });
+      }
     }
   }
   if (suggestion.kind === "NODE_LINK" && typeof payload.nodeId === "string" && suggestion.sourceType === "MESSAGE") {
+    const linkWasNew = !db.messageNodeLinks.some((link) => link.messageId === suggestion.sourceId && link.nodeId === payload.nodeId);
     ensureMessageNodeLink(db, suggestion.sourceId, payload.nodeId, "AI", suggestion.confidence, String(payload.reason ?? "Accepted AI suggestion"));
+    if (linkWasNew) {
+      pushEvent(db, suggestion.projectId, "MESSAGE_LINKED", actor.userId ?? DEMO_USER_ID, payload.nodeId, { messageId: suggestion.sourceId, suggestionId });
+    }
+  }
+  if (suggestion.kind === "NODE_LINK" && typeof payload.nodeId === "string" && suggestion.sourceType === "DOCUMENT") {
+    const sourceNodeId =
+      db.versions.find((version) => version.id === suggestion.sourceId)?.nodeId ??
+      db.nodes.find((node) => node.id === suggestion.sourceId && node.projectId === suggestion.projectId)?.id;
+    if (sourceNodeId && sourceNodeId !== payload.nodeId) {
+      const created = createEdgeInternal(
+        db,
+        suggestion.projectId,
+        payload.nodeId,
+        sourceNodeId,
+        "REFERENCES",
+        "AI document link",
+        actor.userId ?? DEMO_USER_ID,
+        new Date().toISOString(),
+        suggestion.confidence
+      );
+      if (!created.ok && created.code !== "EDGE_DUPLICATED") {
+        return fail(created.code, created.message);
+      }
+    }
   }
   if (
     suggestion.kind === "EDGE" &&
@@ -633,7 +831,7 @@ export function resolveAiSuggestion(suggestionId: string, action: "ACCEPT" | "RE
     typeof payload.toNodeId === "string" &&
     typeof payload.type === "string"
   ) {
-    createEdgeInternal(
+    const created = createEdgeInternal(
       db,
       suggestion.projectId,
       payload.fromNodeId,
@@ -644,6 +842,9 @@ export function resolveAiSuggestion(suggestionId: string, action: "ACCEPT" | "RE
       new Date().toISOString(),
       suggestion.confidence
     );
+    if (!created.ok && created.code !== "EDGE_DUPLICATED") {
+      return fail(created.code, created.message);
+    }
   }
   if (suggestion.kind === "DECISION" && typeof payload.nodeId === "string" && typeof payload.statement === "string") {
     db.decisions.push({
@@ -654,7 +855,9 @@ export function resolveAiSuggestion(suggestionId: string, action: "ACCEPT" | "RE
       decidedAt: new Date().toISOString(),
       createdAt: new Date().toISOString()
     });
+    pushEvent(db, suggestion.projectId, "DECISION_CREATED", actor.userId ?? DEMO_USER_ID, payload.nodeId, { suggestionId });
   }
+  suggestion.status = "ACCEPTED";
   return ok({ suggestion });
 }
 
@@ -668,11 +871,24 @@ export function searchProject(projectId: string, q: string, actor: Actor = defau
   if (!query) {
     return ok({ results: [] });
   }
-  const projectNodeIds = new Set(db.nodes.filter((node) => node.projectId === projectId).map((node) => node.id));
+  const projectNodes = db.nodes.filter((node) => node.projectId === projectId && !node.deletedAt);
+  const projectNodeIds = new Set(projectNodes.map((node) => node.id));
   const results = [
-    ...db.nodes
-      .filter((node) => node.projectId === projectId && !node.deletedAt && matches(query, node.title, node.summary))
-      .map((node) => ({ type: "NODE" as const, id: node.id, title: node.title, excerpt: node.summary, score: score(query, node.title) })),
+    ...projectNodes
+      .map((node) => {
+        const latestVersion = db.versions
+          .filter((version) => version.nodeId === node.id)
+          .sort((a, b) => b.versionNo - a.versionNo)[0];
+        return { node, latestVersion };
+      })
+      .filter(({ node, latestVersion }) => matches(query, node.title, node.summary, latestVersion?.plainText))
+      .map(({ node, latestVersion }) => ({
+        type: "NODE" as const,
+        id: node.id,
+        title: node.title,
+        excerpt: snippetFor(query, matches(query, node.summary) ? node.summary : latestVersion?.plainText ?? node.summary),
+        score: Math.max(score(query, node.title), latestVersion?.plainText?.toLowerCase().includes(query) ? 0.82 : 0)
+      })),
     ...db.messages
       .filter((message) => message.projectId === projectId && !message.deletedAt && matches(query, message.content))
       .map((message) => ({ type: "MESSAGE" as const, id: message.id, title: message.content.slice(0, 80), excerpt: message.content, score: 0.7 })),
@@ -891,12 +1107,24 @@ async function runExtractionForSource(
 
   for (const tagSuggestion of extraction.suggestedTags) {
     if (tagSuggestion.confidence >= 0.85) {
+      const tagWasNew = !db.tags.some((tag) => tag.projectId === projectId && tag.normalized === normalizeTag(tagSuggestion.name));
       const tag = ensureTag(db, projectId, tagSuggestion.name);
+      if (tagWasNew) {
+        pushEvent(db, projectId, "TAG_CREATED", DEMO_USER_ID, undefined, { tagId: tag.id, sourceType, sourceId });
+      }
       if (sourceType === "MESSAGE") {
+        const linkWasNew = !db.messageTags.some((item) => item.messageId === sourceId && item.tagId === tag.id);
         ensureMessageTag(db, sourceId, tag.id, tagSuggestion.confidence, "AI");
+        if (linkWasNew) {
+          pushEvent(db, projectId, "TAG_LINKED", DEMO_USER_ID, undefined, { tagId: tag.id, messageId: sourceId });
+        }
       }
       if (sourceType === "DOCUMENT" && sourceNodeId) {
+        const linkWasNew = !db.nodeTags.some((item) => item.nodeId === sourceNodeId && item.tagId === tag.id);
         ensureNodeTag(db, sourceNodeId, tag.id, tagSuggestion.confidence, "AI");
+        if (linkWasNew) {
+          pushEvent(db, projectId, "TAG_LINKED", DEMO_USER_ID, sourceNodeId, { tagId: tag.id, sourceId });
+        }
       }
     } else if (tagSuggestion.confidence >= 0.6) {
       createSuggestion(db, projectId, sourceType, sourceId, "TAG", tagSuggestion.confidence, { name: tagSuggestion.name, nodeId: sourceNodeId });
@@ -905,7 +1133,11 @@ async function runExtractionForSource(
 
   for (const linkSuggestion of extraction.suggestedNodeLinks) {
     if (linkSuggestion.confidence >= 0.85 && sourceType === "MESSAGE") {
+      const linkWasNew = !db.messageNodeLinks.some((link) => link.messageId === sourceId && link.nodeId === linkSuggestion.nodeId);
       ensureMessageNodeLink(db, sourceId, linkSuggestion.nodeId, "AI", linkSuggestion.confidence, linkSuggestion.reason);
+      if (linkWasNew) {
+        pushEvent(db, projectId, "MESSAGE_LINKED", DEMO_USER_ID, linkSuggestion.nodeId, { messageId: sourceId });
+      }
     } else if (linkSuggestion.confidence >= 0.6) {
       createSuggestion(db, projectId, sourceType, sourceId, "NODE_LINK", linkSuggestion.confidence, linkSuggestion);
     }
@@ -1079,6 +1311,51 @@ function score(query: string, value: string) {
   if (lower === query) return 1;
   if (lower.startsWith(query)) return 0.9;
   return 0.75;
+}
+
+function snippetFor(query: string, value?: string) {
+  if (!value) return undefined;
+  const lower = value.toLowerCase();
+  const index = lower.indexOf(query);
+  if (index < 0) return value.slice(0, 160);
+  const start = Math.max(0, index - 60);
+  return value.slice(start, start + 180);
+}
+
+function titleFromMessage(content: string) {
+  return content.replace(/\s+/g, " ").trim().slice(0, 72) || "Message Context";
+}
+
+function inferNodeTypeFromText(content: string): NodeType {
+  if (/(decision|decided|conclusion|approved|approve|rejected|reject|결정|결론|확정|승인|반려)/i.test(content)) {
+    return "DECISION";
+  }
+  if (/(feedback|피드백|review|검토)/i.test(content)) {
+    return "FEEDBACK";
+  }
+  if (/(task|todo|blocked|해야|작업)/i.test(content)) {
+    return "TASK";
+  }
+  return "IDEA";
+}
+
+function mimeTypeForExtension(extension: string) {
+  switch (extension) {
+    case ".csv":
+      return "text/csv";
+    case ".html":
+      return "text/html";
+    case ".json":
+      return "application/json";
+    case ".md":
+    case ".markdown":
+      return "text/markdown";
+    case ".yaml":
+    case ".yml":
+      return "application/yaml";
+    default:
+      return "text/plain";
+  }
 }
 
 function docFromText(text: string) {
