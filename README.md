@@ -13,6 +13,17 @@
 </p>
 
 <p align="center">
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white" />
+  <img alt="React" src="https://img.shields.io/badge/React-000000?style=flat-square&logo=react&logoColor=white" />
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-000000?style=flat-square&logo=typescript&logoColor=white" />
+  <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_CSS-000000?style=flat-square&logo=tailwindcss&logoColor=white" />
+  <img alt="Prisma" src="https://img.shields.io/badge/Prisma-000000?style=flat-square&logo=prisma&logoColor=white" />
+  <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-000000?style=flat-square&logo=postgresql&logoColor=white" />
+  <img alt="OpenAI-ready" src="https://img.shields.io/badge/OpenAI_ready-000000?style=flat-square&logo=openai&logoColor=white" />
+  <img alt="Markdown" src="https://img.shields.io/badge/Markdown-000000?style=flat-square&logo=markdown&logoColor=white" />
+</p>
+
+<p align="center">
   <a href="./docs/ko/README.md">한국어 README</a> ·
   <a href="https://github.com/TaewoooPark/NODEPROMPT">NODEPROMPT</a> ·
   <a href="https://github.com/TaewoooPark/PAIDEIA">PAIDEIA</a> ·
@@ -25,7 +36,7 @@
 
 ## Visual Prototype
 
-CORETEX is a runnable visual prototype, not a production SaaS. It explores a product direction where project work is not buried in folders, detached chat logs, and isolated document versions. Instead, every meaningful unit of work becomes a **Traceable Work Node** inside a directed graph.
+CORETEX is a runnable visual prototype, not a production SaaS. It explores a product direction where project work is not buried in folders, detached chat logs, and isolated document versions. Instead, every meaningful unit of work becomes a **Traceable Work Node** inside a directed decision graph.
 
 The prototype is built to test one product question:
 
@@ -33,24 +44,27 @@ The prototype is built to test one product question:
 
 The current demo makes that question concrete through a graph workspace, node inspector, document editor, scoped chat, version history, local file import, search, time travel, and archive generation.
 
-## Topic Boxes
+## Why It Exists
 
-<p align="center">
-  <img alt="#typescript" src="https://img.shields.io/badge/%23typescript-333333?style=flat-square&labelColor=000000" />
-  <img alt="#react" src="https://img.shields.io/badge/%23react-333333?style=flat-square&labelColor=000000" />
-  <img alt="#nextjs" src="https://img.shields.io/badge/%23nextjs-333333?style=flat-square&labelColor=000000" />
-  <img alt="#knowledge-graph" src="https://img.shields.io/badge/%23knowledge--graph-333333?style=flat-square&labelColor=000000" />
-  <img alt="#information-visualization" src="https://img.shields.io/badge/%23information--visualization-333333?style=flat-square&labelColor=000000" />
-  <img alt="#local-first" src="https://img.shields.io/badge/%23local--first-333333?style=flat-square&labelColor=000000" />
-  <img alt="#markdown" src="https://img.shields.io/badge/%23markdown-333333?style=flat-square&labelColor=000000" />
-  <img alt="#llm" src="https://img.shields.io/badge/%23llm-333333?style=flat-square&labelColor=000000" />
-  <img alt="#document-management" src="https://img.shields.io/badge/%23document--management-333333?style=flat-square&labelColor=000000" />
-  <img alt="#collaboration" src="https://img.shields.io/badge/%23collaboration-333333?style=flat-square&labelColor=000000" />
-  <img alt="#react-flow" src="https://img.shields.io/badge/%23react--flow-333333?style=flat-square&labelColor=000000" />
-  <img alt="#zustand" src="https://img.shields.io/badge/%23zustand-333333?style=flat-square&labelColor=000000" />
-</p>
+Most collaboration tools preserve artifacts, not reasoning. A file tree can show what exists. A chat transcript can show that people talked. A board can show that work moved. They do not reliably answer why a final output exists, which rejected path shaped it, or where a new teammate should begin reading.
 
-The topic set follows the public taxonomy used across my graph and knowledge-tool repositories, especially NODEPROMPT and PAIDEIA: graph interfaces, local-first workflows, markdown systems, and AI-assisted context extraction.
+CORETEX starts from the premise in [plan.md](./plan.md) that project work is not linear. It is a lineage of assumptions, evidence, edits, arguments, decisions, and abandoned alternatives. A final document is usually only the visible end of a hidden causal chain. The product therefore treats context as a first-class object rather than metadata around a file.
+
+This matters most in work where the discarded branch is still knowledge: startup pivots, research hypotheses, design feedback, strategy documents, product decisions, and handoffs between teams. In those settings, losing the reason behind a decision is often more expensive than losing the decision itself.
+
+## What CORETEX Notices
+
+| Observation | Product consequence |
+| --- | --- |
+| Context is causal, not decorative. | Work is modeled as directed node relationships rather than loose folders or isolated pages. |
+| A final output has ancestry. | `IDEA`, `RESEARCH`, `DRAFT`, `FEEDBACK`, `DECISION`, `ASSET`, and `FINAL` nodes form a decision genealogy. |
+| Conversations are evidence. | Chat messages can attach to nodes, generate suggestions, or become new nodes. |
+| Versions are memory, not overwrite noise. | Document versions are immutable and can be restored as new versions. |
+| Discarded alternatives still explain the final result. | Time travel and archive views preserve what existed before the current state. |
+| AI should not decide for the team. | AI only extracts tags, related nodes, candidate edges, summaries, and explicit decision statements. |
+| Visual shape changes thought. | The interface uses a dense brutalist monochrome system so structure, contrast, and lineage stay visible. |
+
+The implementation rule from [plan.md](./plan.md) is intentionally blunt: if a feature helps the project track context, genealogy, decision reasons, or version flow, it belongs near the core. If it only makes CORETEX look like another file manager, whiteboard, or chat wrapper, it is secondary.
 
 ## Demo Route
 

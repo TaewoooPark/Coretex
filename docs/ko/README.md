@@ -13,6 +13,17 @@
 </p>
 
 <p align="center">
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white" />
+  <img alt="React" src="https://img.shields.io/badge/React-000000?style=flat-square&logo=react&logoColor=white" />
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-000000?style=flat-square&logo=typescript&logoColor=white" />
+  <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_CSS-000000?style=flat-square&logo=tailwindcss&logoColor=white" />
+  <img alt="Prisma" src="https://img.shields.io/badge/Prisma-000000?style=flat-square&logo=prisma&logoColor=white" />
+  <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-000000?style=flat-square&logo=postgresql&logoColor=white" />
+  <img alt="OpenAI-ready" src="https://img.shields.io/badge/OpenAI_ready-000000?style=flat-square&logo=openai&logoColor=white" />
+  <img alt="Markdown" src="https://img.shields.io/badge/Markdown-000000?style=flat-square&logo=markdown&logoColor=white" />
+</p>
+
+<p align="center">
   <a href="../../README.md">English README</a> ·
   <a href="https://github.com/TaewoooPark/NODEPROMPT">NODEPROMPT</a> ·
   <a href="https://github.com/TaewoooPark/PAIDEIA">PAIDEIA</a> ·
@@ -25,7 +36,7 @@
 
 ## 비주얼 프로토타입
 
-CORETEX는 production SaaS가 아니라 실행 가능한 비주얼 프로토타입입니다. 업무가 폴더, 분리된 채팅 로그, 독립 문서 버전에 묻히는 대신, 의미 있는 작업 단위를 **Traceable Work Node**로 만들고 방향성 그래프 안에서 추적하는 제품 방향을 검증합니다.
+CORETEX는 production SaaS가 아니라 실행 가능한 비주얼 프로토타입입니다. 업무가 폴더, 분리된 채팅 로그, 독립 문서 버전에 묻히는 대신, 의미 있는 작업 단위를 **Traceable Work Node**로 만들고 방향성 의사결정 그래프 안에서 추적하는 제품 방향을 검증합니다.
 
 프로토타입이 검증하려는 질문은 하나입니다.
 
@@ -33,24 +44,27 @@ CORETEX는 production SaaS가 아니라 실행 가능한 비주얼 프로토타�
 
 현재 데모에서는 그래프 워크스페이스, 노드 인스펙터, 문서 편집기, scoped chat, 버전 기록, 로컬 파일 import, 검색, 타임트래블, 아카이브 생성을 확인할 수 있습니다.
 
-## 해시태그 박스
+## 왜 필요한가
 
-<p align="center">
-  <img alt="#typescript" src="https://img.shields.io/badge/%23typescript-333333?style=flat-square&labelColor=000000" />
-  <img alt="#react" src="https://img.shields.io/badge/%23react-333333?style=flat-square&labelColor=000000" />
-  <img alt="#nextjs" src="https://img.shields.io/badge/%23nextjs-333333?style=flat-square&labelColor=000000" />
-  <img alt="#knowledge-graph" src="https://img.shields.io/badge/%23knowledge--graph-333333?style=flat-square&labelColor=000000" />
-  <img alt="#information-visualization" src="https://img.shields.io/badge/%23information--visualization-333333?style=flat-square&labelColor=000000" />
-  <img alt="#local-first" src="https://img.shields.io/badge/%23local--first-333333?style=flat-square&labelColor=000000" />
-  <img alt="#markdown" src="https://img.shields.io/badge/%23markdown-333333?style=flat-square&labelColor=000000" />
-  <img alt="#llm" src="https://img.shields.io/badge/%23llm-333333?style=flat-square&labelColor=000000" />
-  <img alt="#document-management" src="https://img.shields.io/badge/%23document--management-333333?style=flat-square&labelColor=000000" />
-  <img alt="#collaboration" src="https://img.shields.io/badge/%23collaboration-333333?style=flat-square&labelColor=000000" />
-  <img alt="#react-flow" src="https://img.shields.io/badge/%23react--flow-333333?style=flat-square&labelColor=000000" />
-  <img alt="#zustand" src="https://img.shields.io/badge/%23zustand-333333?style=flat-square&labelColor=000000" />
-</p>
+대부분의 협업 도구는 산출물은 보존하지만 사고 과정은 보존하지 못합니다. 파일 트리는 무엇이 존재하는지 보여주고, 채팅 로그는 사람들이 대화했다는 사실을 보여주고, 보드는 일이 이동했다는 사실을 보여줍니다. 하지만 최종안이 왜 존재하는지, 어떤 폐기안이 지금 방향을 만들었는지, 새 팀원이 어디서부터 읽어야 하는지는 안정적으로 답하지 못합니다.
 
-태그 구성은 NODEPROMPT와 PAIDEIA에서 반복적으로 쓰인 공개 레포 분류를 CORETEX에 맞춰 조정했습니다. 그래프 인터페이스, local-first 워크플로, markdown 기반 시스템, AI 보조 맥락 추출 계열입니다.
+CORETEX는 [plan.md](../../plan.md)의 전제처럼 프로젝트 업무가 선형적이지 않다는 관찰에서 출발합니다. 실제 업무는 가정, 근거, 수정, 논쟁, 결정, 폐기된 대안이 이어진 계보입니다. 최종 문서는 보통 그 인과 사슬의 마지막에 보이는 표면일 뿐입니다. 따라서 CORETEX는 맥락을 파일 주변의 부가 정보가 아니라 독립적인 1급 객체로 다룹니다.
+
+이 문제는 폐기된 갈래도 지식인 곳에서 특히 큽니다. 스타트업의 방향 전환, 연구팀의 가설과 실패한 실험, 디자인 피드백, 전략 문서, 제품 의사결정, 팀 간 인수인계에서는 결정 자체보다 결정 이유를 잃는 비용이 더 커질 수 있습니다.
+
+## CORETEX가 주목하는 것
+
+| 관찰 | 제품적 귀결 |
+| --- | --- |
+| 맥락은 장식이 아니라 인과입니다. | 작업을 느슨한 폴더나 독립 페이지가 아니라 방향성 노드 관계로 모델링합니다. |
+| 최종 산출물에는 조상이 있습니다. | `IDEA`, `RESEARCH`, `DRAFT`, `FEEDBACK`, `DECISION`, `ASSET`, `FINAL` 노드가 의사결정 계보를 이룹니다. |
+| 대화는 근거입니다. | 채팅 메시지는 노드에 붙거나, 제안을 만들거나, 새 노드로 승격될 수 있습니다. |
+| 버전은 덮어쓰기 소음이 아니라 기억입니다. | 문서 버전은 immutable하게 저장되고 새 버전으로 복원될 수 있습니다. |
+| 폐기된 대안도 최종안을 설명합니다. | 타임트래블과 아카이브가 현재 이전에 존재했던 상태를 보존합니다. |
+| AI는 팀 대신 결정하지 않아야 합니다. | AI는 태그, 관련 노드, 후보 edge, 요약, 명시적 결정 문장만 추출합니다. |
+| 시각적 형태는 사고 방식을 바꿉니다. | 조밀한 브루탈리즘 모노톤 UI로 구조, 대비, 계보가 계속 보이게 합니다. |
+
+[plan.md](../../plan.md)의 구현 판단 기준은 단순합니다. 어떤 기능이 프로젝트의 맥락, 계보, 결정 이유, 버전 흐름을 더 잘 추적하게 만든다면 핵심에 가깝습니다. 단지 CORETEX를 또 다른 파일 관리자, 화이트보드, 채팅 껍데기처럼 보이게 하는 기능이라면 부차적입니다.
 
 ## 데모 주소
 
