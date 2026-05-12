@@ -34,23 +34,26 @@
   <img src="./docs/assets/coretex-hero.svg" alt="CORETEX visual prototype overview" width="100%" />
 </p>
 
+<p align="center">
+  <em>"Writing gives not memory, but only reminding."</em><br />
+  — Plato, <i>Phaedrus</i> 275a
+</p>
+
+## Why CORETEX
+
+Two and a half thousand years ago Plato already separated *mnēmē* — living memory — from *hypomnēsis*, the external reminder that writing leaves behind. The finished document is the reminder. The reasoning that produced it — the discarded drafts, the conversations that closed a branch, the argument that turned an idea into a decision — almost always disappears the moment the file is saved.
+
+Most collaboration tools accept that loss as a fact of nature. They preserve artifacts, not reasoning. A file tree shows what exists. A chat transcript shows that people talked. A board shows that work moved. None of them reliably answer **why** a final output exists, **which** rejected path shaped it, or **where** a new teammate should start reading.
+
+CORETEX treats the loss as an engineering problem rather than a metaphysical one. Project work is modelled as a directed lineage of assumptions, evidence, edits, arguments, decisions, and abandoned alternatives — a **decision genealogy graph** in which every meaningful unit of work becomes a *Traceable Work Node*. The final document is no longer the only artifact; it is the visible end of a chain the product keeps walkable.
+
+This matters most where the discarded branch is still knowledge: startup pivots, research hypotheses, design feedback, strategy documents, product decisions, and handoffs between teams. In those settings, losing the *reason* behind a decision is often more expensive than losing the decision itself.
+
 ## Visual Prototype
 
-CORETEX is a runnable visual prototype, not a production SaaS. It explores a product direction where project work is not buried in folders, detached chat logs, and isolated document versions. Instead, every meaningful unit of work becomes a **Traceable Work Node** inside a directed decision graph.
-
-The prototype is built to test one product question:
+CORETEX is a runnable visual prototype, not a production SaaS. The current demo makes the premise concrete through a graph workspace, node inspector, document editor, scoped chat, version history, local file import, search, time travel, and archive generation — built around one product question:
 
 > Can a team trace where a final output came from, which drafts and conversations shaped it, and what evidence still supports the decision?
-
-The current demo makes that question concrete through a graph workspace, node inspector, document editor, scoped chat, version history, local file import, search, time travel, and archive generation.
-
-## Why It Exists
-
-Most collaboration tools preserve artifacts, not reasoning. A file tree can show what exists. A chat transcript can show that people talked. A board can show that work moved. They do not reliably answer why a final output exists, which rejected path shaped it, or where a new teammate should begin reading.
-
-CORETEX treats project work as a lineage of assumptions, evidence, edits, arguments, decisions, and abandoned alternatives rather than a linear sequence of files. A final document is usually only the visible end of a hidden causal chain, so the product treats context as a first-class object rather than metadata around a file.
-
-This matters most in work where the discarded branch is still knowledge: startup pivots, research hypotheses, design feedback, strategy documents, product decisions, and handoffs between teams. In those settings, losing the reason behind a decision is often more expensive than losing the decision itself.
 
 ## What CORETEX Notices
 
