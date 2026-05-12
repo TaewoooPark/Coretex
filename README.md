@@ -69,22 +69,19 @@ CORETEX is a runnable visual prototype, not a production SaaS. The current demo 
 
 The prototype keeps a blunt scope rule: if a feature helps track context, genealogy, decision reasons, or version flow, it belongs near the core. If it only makes CORETEX look like another file manager, whiteboard, or chat wrapper, it is secondary.
 
-## Demo Route
-
-Start the dev server and open the flow workspace:
+## Run The Demo
 
 ```bash
 npm install
-npm run dev -- --port 3000
+npm run dev
 ```
+
+Open [`http://localhost:3000`](http://localhost:3000). The home route signs you in as the demo user and lands on the workspace selector — pick the seeded **CORETEX Demo** workspace and the **Project Demo** project, then open the **Flow** tab.
+
+Direct links once the dev server is running:
 
 ```text
 http://localhost:3000/app/w/workspace_demo/p/project_demo/flow
-```
-
-Archive route:
-
-```text
 http://localhost:3000/app/w/workspace_demo/p/project_demo/archive
 ```
 

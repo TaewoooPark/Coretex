@@ -69,22 +69,19 @@ CORETEX는 production SaaS가 아니라 실행 가능한 비주얼 프로토타�
 
 프로토타입의 범위 기준은 단순합니다. 어떤 기능이 프로젝트의 맥락, 계보, 결정 이유, 버전 흐름을 더 잘 추적하게 만든다면 핵심에 가깝습니다. 단지 CORETEX를 또 다른 파일 관리자, 화이트보드, 채팅 껍데기처럼 보이게 하는 기능이라면 부차적입니다.
 
-## 데모 주소
-
-개발 서버를 실행한 뒤 flow workspace를 엽니다.
+## 데모 실행
 
 ```bash
 npm install
-npm run dev -- --port 3000
+npm run dev
 ```
+
+브라우저에서 [`http://localhost:3000`](http://localhost:3000) 을 엽니다. 홈 라우트가 데모 유저로 자동 로그인시킨 뒤 워크스페이스 선택 화면으로 이동합니다. seed된 **CORETEX Demo** 워크스페이스 → **Project Demo** 프로젝트 → **Flow** 탭을 차례로 열면 됩니다.
+
+개발 서버가 떠 있을 때 바로 들어갈 수 있는 딥링크:
 
 ```text
 http://localhost:3000/app/w/workspace_demo/p/project_demo/flow
-```
-
-아카이브 주소:
-
-```text
 http://localhost:3000/app/w/workspace_demo/p/project_demo/archive
 ```
 
