@@ -71,18 +71,39 @@ The prototype keeps a blunt scope rule: if a feature helps track context, geneal
 
 ## Run The Demo
 
+**Requirements**: Node.js 20 or newer (Next.js 16). No database is required — the prototype runs on an in-memory mock store that auto-seeds the demo workspace and project on first request.
+
 ```bash
+git clone https://github.com/TaewoooPark/Coretex.git
+cd Coretex
 npm install
 npm run dev
 ```
 
-Open [`http://localhost:3000`](http://localhost:3000). The home route signs you in as the demo user and lands on the workspace selector — pick the seeded **CORETEX Demo** workspace and the **Project Demo** project, then open the **Flow** tab.
+Open [`http://localhost:3000`](http://localhost:3000). The home route signs you in as the demo user and redirects to the workspace selector — pick the seeded **CORETEX Demo** workspace, then the **Project Demo** project, then the **Flow** tab.
 
 Direct links once the dev server is running:
 
 ```text
 http://localhost:3000/app/w/workspace_demo/p/project_demo/flow
 http://localhost:3000/app/w/workspace_demo/p/project_demo/archive
+```
+
+### Optional configuration
+
+Everything below is optional. The demo works without any of it.
+
+| Variable | Effect when set |
+| --- | --- |
+| `OPENAI_API_KEY` | Enables the live OpenAI extraction path in `lib/ai/extractContext.ts`. Without it, CORETEX falls back to a deterministic local extractor (`#tags`, `@node-title` mentions, decision phrases). |
+| `OPENAI_MODEL` | Overrides the default model (`gpt-4o-mini`) used by the extractor. |
+| `CORETEX_LOCAL_LIBRARY_ROOT` | Overrides the directory scanned by the local file panel (default: `data/local-library`). |
+| `DATABASE_URL` | Only consumed by `prisma` CLI commands (`npx prisma validate`, `npm run prisma:generate`, `npm run seed`). The running app does **not** read it. |
+
+Copy `.env.example` to `.env` before touching anything Prisma-related:
+
+```bash
+cp .env.example .env
 ```
 
 ## What The Demo Shows

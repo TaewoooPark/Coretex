@@ -71,18 +71,39 @@ CORETEX는 production SaaS가 아니라 실행 가능한 비주얼 프로토타�
 
 ## 데모 실행
 
+**요구 사항**: Node.js 20 이상 (Next.js 16). 별도의 데이터베이스가 필요 없습니다. 프로토타입은 첫 요청 시점에 데모 워크스페이스/프로젝트를 자동 시드(seed)하는 in-memory mock store 위에서 동작합니다.
+
 ```bash
+git clone https://github.com/TaewoooPark/Coretex.git
+cd Coretex
 npm install
 npm run dev
 ```
 
-브라우저에서 [`http://localhost:3000`](http://localhost:3000) 을 엽니다. 홈 라우트가 데모 유저로 자동 로그인시킨 뒤 워크스페이스 선택 화면으로 이동합니다. seed된 **CORETEX Demo** 워크스페이스 → **Project Demo** 프로젝트 → **Flow** 탭을 차례로 열면 됩니다.
+브라우저에서 [`http://localhost:3000`](http://localhost:3000) 을 엽니다. 홈 라우트가 데모 유저로 자동 로그인시킨 뒤 워크스페이스 선택 화면으로 리다이렉트합니다. seed된 **CORETEX Demo** 워크스페이스 → **Project Demo** 프로젝트 → **Flow** 탭을 차례로 열면 됩니다.
 
 개발 서버가 떠 있을 때 바로 들어갈 수 있는 딥링크:
 
 ```text
 http://localhost:3000/app/w/workspace_demo/p/project_demo/flow
 http://localhost:3000/app/w/workspace_demo/p/project_demo/archive
+```
+
+### 선택 환경 변수
+
+아래는 전부 옵션입니다. 아무것도 설정하지 않아도 데모는 동작합니다.
+
+| 변수 | 설정 시 효과 |
+| --- | --- |
+| `OPENAI_API_KEY` | `lib/ai/extractContext.ts`의 OpenAI 호출 경로를 활성화합니다. 없으면 `#tag`, `@node-title`, 결정 문장 패턴 기반의 결정적 로컬 추출기로 fallback 됩니다. |
+| `OPENAI_MODEL` | 추출기에 쓰이는 모델(`gpt-4o-mini`)을 override 합니다. |
+| `CORETEX_LOCAL_LIBRARY_ROOT` | 로컬 파일 패널이 스캔하는 경로(`data/local-library`)를 override 합니다. |
+| `DATABASE_URL` | `prisma` CLI 명령(`npx prisma validate`, `npm run prisma:generate`, `npm run seed`)에서만 사용됩니다. 실행 중인 앱은 이 값을 읽지 **않습니다**. |
+
+Prisma 관련 명령을 쓰기 전에는 `.env.example`을 복사하세요.
+
+```bash
+cp .env.example .env
 ```
 
 ## 데모에서 확인 가능한 것
